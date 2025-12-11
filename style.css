@@ -1,0 +1,101 @@
+/* =========================================
+   1. BASE & SCROLLBARS
+   ========================================= */
+body {
+    background-color: #0f172a;
+    background-image: radial-gradient(#1e293b 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+/* Custom Scrollbar (Desktop) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+
+/* Hide Scrollbar for Mobile Nav (Cross-Browser) */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* =========================================
+   2. COMPONENT UTILITIES
+   ========================================= */
+/* Glow Effects */
+.glow-card {
+    background-color: #1e293b;
+    border: 1px solid rgba(56, 189, 248, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+.glow-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(56, 189, 248, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.3);
+}
+
+/* Typing Cursor */
+.cursor {
+    display: inline-block;
+    width: 4px;
+    background-color: #38bdf8;
+    animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* =========================================
+   3. LEARN MODULE: TABS & ANIMATION
+   ========================================= */
+/* Tab Content Visibility Logic */
+.tab-content {
+    display: none; /* Hidden by default */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* When Active: Show and Animate */
+.tab-content.active {
+    display: block;
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Sidebar Nav Item Active State */
+.nav-item {
+    color: #94a3b8; /* Default color (slate-400) */
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+}
+.nav-item:hover {
+    background-color: #1e293b;
+}
+.nav-item.active {
+    background: linear-gradient(90deg, rgba(56,189,248,0.1) 0%, transparent 100%);
+    border-left: 4px solid #38bdf8;
+    color: white;
+}
+
+/* Mobile Nav Item Active State */
+.mob-link.active {
+    background-color: #0284c7; /* Sky 600 */
+    color: white;
+    box-shadow: 0 4px 15px -3px rgba(14, 165, 233, 0.4);
+    border-color: transparent;
+}
+
+/* =========================================
+   4. SYNTAX HIGHLIGHTING (C++ THEME)
+   ========================================= */
+.token-kw { color: #c084fc; font-weight: bold; }   /* Keywords: int, void */
+.token-fn { color: #38bdf8; }                      /* Functions/Variables */
+.token-num { color: #facc15; }                     /* Numbers */
+.token-str { color: #4ade80; }                     /* Strings */
+.token-cmt { color: #64748b; font-style: italic; } /* Comments */
+
+/* =========================================
+   5. INTERACTIVE ELEMENTS
+   ========================================= */
+.memory-box { cursor: pointer; transition: all 0.2s; }
+.memory-box.revealed { background-color: #0ea5e9; border-color: #38bdf8; color: white; }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSC402 Arrays | Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#0f172a] text-slate-300 font-sans antialiased flex flex-col min-h-screen">
+
+    <header id="dynamic-header" class="fixed w-full top-0 z-50 bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-800"></header>
+
+    <main class="flex-grow pt-20">
+        <section class="relative py-32 lg:py-48 overflow-hidden flex items-center justify-center text-center px-4">
+            <div class="parallax-blob absolute top-0 left-1/4 w-[500px] h-[500px] bg-sky-600/20 rounded-full blur-[100px] -z-10 pointer-events-none" data-speed="2"></div>
+            <div class="parallax-blob absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[100px] -z-10 pointer-events-none" data-speed="-2"></div>
+            
+            <div class="max-w-4xl mx-auto z-10">
+                <h1 class="text-6xl md:text-8xl font-extrabold text-white tracking-tight mb-6">
+                    Master 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">
+                        <span id="typing-text">Arrays</span><span class="cursor">&nbsp;</span>
+                    </span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    The most fundamental data structure in C++. Learn how to manage memory, optimize storage, and write cleaner code.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="learn.html" class="px-8 py-4 bg-sky-500 hover:bg-sky-400 text-[#0f172a] font-bold rounded-xl transition w-full sm:w-auto shadow-[0_0_20px_rgba(14,165,233,0.4)] hover:scale-105">Start Learning</a>
+                    <a href="tutorial.html" class="px-8 py-4 bg-[#1e293b] hover:bg-[#334155] text-white border border-slate-700 font-bold rounded-xl transition w-full sm:w-auto">Watch Video</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 bg-[#0b1120]/50 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div onclick="window.location.href='learn.html'" class="glow-card p-8 rounded-2xl cursor-pointer group">
+                        <div class="w-14 h-14 bg-sky-500/10 rounded-xl flex items-center justify-center text-sky-400 mb-6 text-3xl group-hover:scale-110 transition">📚</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Topic 5 Coverage</h3>
+                        <p class="text-slate-400 leading-relaxed">Comprehensive coverage of Arrays based on the official CSC402 syllabus.</p>
+                    </div>
+                    <div onclick="window.location.href='tutorial.html'" class="glow-card p-8 rounded-2xl cursor-pointer group">
+                        <div class="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-400 mb-6 text-3xl group-hover:scale-110 transition">🎥</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Multimedia</h3>
+                        <p class="text-slate-400 leading-relaxed">Engaging animations and video walkthroughs to visualize memory concepts.</p>
+                    </div>
+                    <div onclick="window.location.href='activity.html'" class="glow-card p-8 rounded-2xl cursor-pointer group">
+                        <div class="w-14 h-14 bg-green-500/10 rounded-xl flex items-center justify-center text-green-400 mb-6 text-3xl group-hover:scale-110 transition">✅</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Interactive Quiz</h3>
+                        <p class="text-slate-400 leading-relaxed">Test your knowledge immediately with built-in assessments and instant feedback.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800"></footer>
+    <script src="script.js"></script>
+</body>
+</html>
