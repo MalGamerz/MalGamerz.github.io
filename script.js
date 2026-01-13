@@ -67,7 +67,7 @@ function loadGlobalElements() {
                         <span class="text-sky-500 text-2xl">❖</span> CSC402 Learning Module
                     </h3>
                     <p class="leading-relaxed opacity-80 max-w-sm">
-                        An interactive multimedia platform designed for the College of Computing, Informatics and Media. Simplify your C++ journey with visual simulations.
+                        An interactive multimedia platform designed for the Faculty of Computer & Mathematical Sciences. Simplify your C++ journey with visual simulations.
                     </p>
                 </div>
                 <div>
