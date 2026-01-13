@@ -85,7 +85,7 @@ function loadGlobalElements() {
                             <span>📧</span> <a href="mailto:support@uitm.edu.my" class="hover:text-white transition">support@uitm.edu.my</a>
                         </li>
                         <li class="flex items-center gap-2">
-                            <span>🏫</span> UiTM Shah Alam
+                            <span>🏫</span> UiTM Jasin
                         </li>
                     </ul>
                 </div>
@@ -373,3 +373,4 @@ function initParallax() {
         });
     });
 }
+
