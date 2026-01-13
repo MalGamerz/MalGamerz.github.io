@@ -8,11 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Typography Enhancements for Long-Form Content */
         .prose-text { line-height: 1.8; color: #cbd5e1; }
         .prose-heading { color: white; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 1rem; margin-top: 2.5rem; }
         .code-block { font-family: 'JetBrains Mono', monospace; background: #0f172a; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.5rem; margin: 1.5rem 0; overflow-x: auto; font-size: 0.9rem; }
         .highlight-box { border-left-width: 4px; padding: 1.5rem; background: rgba(15, 23, 42, 0.5); border-radius: 0 0.75rem 0.75rem 0; margin: 2rem 0; }
+        
+        /* Video Container Aspect Ratio Fix */
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1rem; border: 1px solid #334155; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     </style>
 </head>
 <body class="bg-[#0f172a] text-slate-300 font-sans flex flex-col h-screen overflow-hidden">
@@ -61,6 +64,15 @@
                 <span class="px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 uppercase tracking-widest">5.1 Fundamentals</span>
                 <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">The Physics of <span class="text-sky-500">Memory</span></h1>
                 
+                <div class="mb-12 shadow-2xl">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/7Jcfk4F4Cig" title="Introduction to Arrays" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="bg-slate-800 p-3 text-xs text-slate-400 text-center rounded-b-xl">
+                        Lecture 5.1: Introduction to Data Structures & Arrays
+                    </div>
+                </div>
+
                 <div class="prose-text text-lg">
                     <p class="mb-6">
                         To master C++, you must stop thinking of variables as "boxes" and start thinking of them as <strong>addresses</strong>. An array is not just a list; it is a direct reservation of physical system memory.
@@ -69,6 +81,14 @@
                         <strong>Definition:</strong> An array is a fixed-size homogeneous collection of elements stored in <strong>contiguous</strong> memory locations. "Contiguous" means side-by-side, without gaps. This physical arrangement is what gives arrays their speed.
                     </p>
                 </div>
+
+                <figure class="my-12">
+                    <div class="bg-white p-2 rounded-xl border border-slate-700">
+                        
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Array_Architecture.svg/1200px-Array_Architecture.svg.png" alt="Memory Layout Diagram" class="w-full rounded-lg">
+                    </div>
+                    <figcaption class="text-center text-xs text-slate-500 mt-3 font-mono">Figure 1: Visualizing how 4-byte integers sit side-by-side in RAM.</figcaption>
+                </figure>
 
                 <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-2xl overflow-hidden my-12">
                     <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
@@ -97,33 +117,12 @@
                     </div>
                 </div>
 
-                <h2 class="text-3xl font-bold text-white mt-12 mb-6">Why does the address jump by 4?</h2>
-                <p class="prose-text mb-6">
-                    In the simulator above, Address 0 is <code>0x100</code>, and Address 1 is <code>0x104</code>. This is because every <strong>integer (int)</strong> takes up exactly <strong>4 bytes</strong> of memory.
-                </p>
-                <ul class="space-y-4 mb-8">
-                    <li class="flex items-start gap-3">
-                        <span class="text-sky-500 mt-1">➤</span>
-                        <p class="text-slate-300"><strong>Math:</strong> Next Address = Current Address + SizeOf(DataType)</p>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="text-sky-500 mt-1">➤</span>
-                        <p class="text-slate-300">If this were a <code>double</code> array, the jump would be <strong>8 bytes</strong>.</p>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="text-sky-500 mt-1">➤</span>
-                        <p class="text-slate-300">If this were a <code>char</code> array, the jump would be <strong>1 byte</strong>.</p>
-                    </li>
-                </ul>
-
                 <div class="highlight-box border-l-purple-500 bg-purple-900/10">
                     <h3 class="text-purple-400 font-bold mb-2">🚀 Deep Dive: O(1) Access Time</h3>
                     <p class="text-sm text-slate-300">
                         Because the memory is contiguous, the computer doesn't need to "search" for the 500th element. It uses a simple math formula to teleport there instantly:
                         <br><br>
                         <code class="bg-black px-2 py-1 rounded text-purple-300 font-mono">Address = BaseAddress + (Index * SizeOfElement)</code>
-                        <br><br>
-                        This makes arrays the fastest data structure for reading data.
                     </p>
                 </div>
             </div>
@@ -132,11 +131,20 @@
                 <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-widest">5.2 Rules & Syntax</span>
                 <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">Declaration <span class="text-purple-400">Mastery</span></h1>
 
+                <figure class="my-8 float-right ml-6 w-full md:w-1/2">
+                    <div class="bg-white p-2 rounded-xl border border-slate-700 rotate-2 hover:rotate-0 transition duration-500">
+                         
+                         <img src="https://media.geeksforgeeks.org/wp-content/uploads/20230302111855/arrays-in-c.png" alt="Syntax Anatomy Diagram" class="w-full rounded-lg">
+                    </div>
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">Figure 2: Components of Declaration</figcaption>
+                </figure>
+
                 <p class="prose-text mb-8">
                     Declaring an array tells the compiler to reserve a specific block of memory. Unlike high-level languages (like Python or JS), C++ arrays are <strong>static</strong>—their size cannot change once the program is running.
                 </p>
 
-                <h2 class="prose-heading text-2xl">1. The Anatomy of Declaration</h2>
+                <h2 class="prose-heading text-2xl clear-both pt-8">1. The Anatomy of Declaration</h2>
+                
                 <div class="mb-12 bg-[#111827] p-8 md:p-12 rounded-2xl border border-slate-800 shadow-xl overflow-x-auto">
                     <div class="flex items-start justify-center gap-2 md:gap-6 font-mono text-3xl md:text-5xl whitespace-nowrap min-h-[100px]">
                         <div class="group flex flex-col items-center cursor-help relative">
@@ -158,7 +166,7 @@
 
                 <h2 class="prose-heading text-2xl">2. Initialization Patterns (The 4 Ways)</h2>
                 
-                <div class="space-y-6">
+                <div class="grid grid-cols-1 gap-6">
                     <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-green-500">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="text-green-400 font-bold">A. Full Initialization</h4>
@@ -180,34 +188,21 @@
                         </code>
                         <p class="text-xs text-slate-400">Sets indices 0 and 1. <strong class="text-white">Crucially, the compiler automatically fills the remaining slots with 0.</strong> This is the fastest way to zero-out a large array: <code>int x[1000] = {0};</code></p>
                     </div>
-
-                    <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-yellow-500">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-yellow-400 font-bold">C. Implicit Sizing</h4>
-                            <span class="text-[10px] bg-yellow-900/30 text-yellow-400 px-2 py-1 rounded border border-yellow-500/30">Situational</span>
-                        </div>
-                        <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
-                            <span class="token-kw">int</span> arr[] = {<span class="token-num">1</span>, <span class="token-num">2</span>, <span class="token-num">3</span>}; <span class="token-cmt">// Size becomes 3</span>
-                        </code>
-                        <p class="text-xs text-slate-400">The compiler counts the elements for you. Dangerous if you later need to add more data, as the size is locked at 3.</p>
-                    </div>
-
-                    <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-red-500">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-red-400 font-bold">D. No Initialization</h4>
-                            <span class="text-[10px] bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-500/30">Danger</span>
-                        </div>
-                        <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
-                            <span class="token-kw">int</span> arr[5];
-                        </code>
-                        <p class="text-xs text-slate-400">The array contains <strong>Garbage Values</strong> (random data left over in RAM). Using these values will crash your program or produce wrong math.</p>
-                    </div>
                 </div>
             </div>
 
             <div id="topic-5-3" class="tab-content max-w-4xl mx-auto pb-32">
                 <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-widest">5.3 Logic & Algorithms</span>
                 <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">Processing <span class="text-amber-500">Data</span></h1>
+                
+                <div class="mb-12 shadow-2xl">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/hQW5O-X_o8w" title="Looping through Arrays" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="bg-slate-800 p-3 text-xs text-slate-400 text-center rounded-b-xl">
+                        Lecture 5.3: Iterating and Processing Array Elements
+                    </div>
+                </div>
 
                 <p class="prose-text mb-8">
                     An array is useless if you cannot manipulate it. Processing involves traversing the array (usually with loops) to perform operations like summation, searching, or sorting.
@@ -252,21 +247,6 @@
         maxVal = arr[i];
 }</pre>
                     </div>
-                </div>
-
-                <h2 class="prose-heading text-2xl mt-12">4. Advanced: Arrays and Pointers</h2>
-                <p class="prose-text mb-6">
-                    This is where C++ gets powerful. The name of an array is actually a <strong>pointer</strong> to its first element.
-                </p>
-                <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-                    <p class="font-mono text-sm text-slate-300 mb-4">
-                        If you declare: <code class="text-pink-400">int x[5];</code>
-                    </p>
-                    <ul class="space-y-2 text-sm text-slate-400">
-                        <li><code>cout << x;</code> prints the <strong>Memory Address</strong> (e.g., 0x7fff...)</li>
-                        <li><code>cout << x[0];</code> prints the <strong>Value</strong>.</li>
-                        <li><code>cout << *x;</code> (Dereferencing) also prints the <strong>Value</strong> at index 0.</li>
-                    </ul>
                 </div>
 
                 <h2 class="prose-heading text-2xl mt-12">5. Special Case: Character Arrays</h2>
