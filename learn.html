@@ -89,6 +89,16 @@
                     <figcaption class="text-center text-xs text-slate-500 mt-3 font-mono">Figure 1: Example of an array stored contiguously in memory (each element next to the next)</figcaption>
                 </figure>
 
+                <h2 class="text-3xl font-bold text-white mt-12 mb-6">Why does the address jump by 4?</h2>
+                <div class="prose-text mb-6">
+                    <p>In the simulator below, notice that Address 0 might be <code>0x100</code>, and Address 1 is <code>0x104</code>. This is because every <strong>integer (int)</strong> takes up exactly <strong>4 bytes</strong> of memory.</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-4">
+                        <li><strong>Math:</strong> Next Address = Current Address + SizeOf(DataType)</li>
+                        <li>If this were a <code>double</code> array, the jump would be <strong>8 bytes</strong>.</li>
+                        <li>If this were a <code>char</code> array, the jump would be <strong>1 byte</strong>.</li>
+                    </ul>
+                </div>
+
                 <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-2xl overflow-hidden my-12">
                     <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
                         <span class="text-sm font-bold text-slate-400 uppercase tracking-wider">RAM Inspection Tool</span>
@@ -139,15 +149,13 @@
                              <text x="160" y="100" font-family="monospace" font-size="24" fill="#94a3b8">[</text>
                              <text x="180" y="100" font-family="monospace" font-size="24" fill="#eab308" font-weight="bold">10</text>
                              <text x="215" y="100" font-family="monospace" font-size="24" fill="#94a3b8">];</text>
-                             <path d="M70 110 L70 140" stroke="#a855f7" stroke-width="2" marker-end="url(#arrow)" />
+                             <path d="M70 110 L70 140" stroke="#a855f7" stroke-width="2" />
                              <text x="50" y="160" font-family="sans-serif" font-size="12" fill="#a855f7">Type</text>
-
                              <path d="M130 110 L130 140" stroke="#38bdf8" stroke-width="2" />
                              <text x="110" y="160" font-family="sans-serif" font-size="12" fill="#38bdf8">Name</text>
-
                              <path d="M200 110 L200 140" stroke="#eab308" stroke-width="2" />
                              <text x="180" y="160" font-family="sans-serif" font-size="12" fill="#eab308">Size</text>
-                         </svg>
+                          </svg>
                     </div>
                     <figcaption class="text-center text-xs text-slate-500 mt-2">Figure 2: Syntax Components</figcaption>
                 </figure>
@@ -178,6 +186,7 @@
                 </div>
 
                 <h2 class="prose-heading text-2xl">2. Initialization Patterns (The 4 Ways)</h2>
+                <p class="mb-6 prose-text">There are four distinct ways to set the initial values of an array. Choosing the wrong one can lead to bugs.</p>
                 
                 <div class="grid grid-cols-1 gap-6">
                     <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-green-500">
@@ -188,7 +197,7 @@
                         <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
                             <span class="token-kw">int</span> arr[3] = {<span class="token-num">10</span>, <span class="token-num">20</span>, <span class="token-num">30</span>};
                         </code>
-                        <p class="text-xs text-slate-400">Explicitly sets every value. No ambiguity.</p>
+                        <p class="text-xs text-slate-400">Explicitly sets every value. No ambiguity. Best for small, fixed data sets.</p>
                     </div>
 
                     <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-sky-500">
@@ -200,6 +209,28 @@
                             <span class="token-kw">int</span> arr[5] = {<span class="token-num">10</span>, <span class="token-num">20</span>}; <span class="token-cmt">// Rest becomes 0</span>
                         </code>
                         <p class="text-xs text-slate-400">Sets indices 0 and 1. <strong class="text-white">Crucially, the compiler automatically fills the remaining slots with 0.</strong> This is the fastest way to zero-out a large array: <code>int x[1000] = {0};</code></p>
+                    </div>
+
+                    <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-yellow-500">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-yellow-400 font-bold">C. Implicit Sizing</h4>
+                            <span class="text-[10px] bg-yellow-900/30 text-yellow-400 px-2 py-1 rounded border border-yellow-500/30">Situational</span>
+                        </div>
+                        <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
+                            <span class="token-kw">int</span> arr[] = {<span class="token-num">1</span>, <span class="token-num">2</span>, <span class="token-num">3</span>}; <span class="token-cmt">// Size becomes 3</span>
+                        </code>
+                        <p class="text-xs text-slate-400">The compiler counts the elements for you. Useful when you don't want to manually count, but dangerous if you later need to append data, as the size is locked at 3.</p>
+                    </div>
+
+                    <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-red-500">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-red-400 font-bold">D. No Initialization</h4>
+                            <span class="text-[10px] bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-500/30">Danger</span>
+                        </div>
+                        <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
+                            <span class="token-kw">int</span> arr[5];
+                        </code>
+                        <p class="text-xs text-slate-400">The array contains <strong>Garbage Values</strong> (random data left over in RAM from previous programs). Accessing this without assigning values first will cause calculation errors.</p>
                     </div>
                 </div>
             </div>
@@ -262,6 +293,21 @@
                     </div>
                 </div>
 
+                <h2 class="prose-heading text-2xl mt-12">4. Advanced: Arrays and Pointers</h2>
+                <p class="prose-text mb-6">
+                    This is where C++ gets powerful. The name of an array is actually a <strong>pointer</strong> to its first element. This concept is critical for understanding how arrays are passed to functions.
+                </p>
+                <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                    <p class="font-mono text-sm text-slate-300 mb-4">
+                        If you declare: <code class="text-pink-400">int x[5];</code>
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><code>cout << x;</code> prints the <strong>Memory Address</strong> (e.g., 0x7fff...)</li>
+                        <li><code>cout << x[0];</code> prints the <strong>Value</strong>.</li>
+                        <li><code>cout << *x;</code> (Dereferencing) also prints the <strong>Value</strong> at index 0.</li>
+                    </ul>
+                </div>
+
                 <h2 class="prose-heading text-2xl mt-12">5. Special Case: Character Arrays</h2>
                 <div class="bg-[#1e293b] p-8 rounded-2xl border border-slate-700 shadow-xl mb-12">
                     <div class="flex flex-col md:flex-row gap-8 items-center">
@@ -289,5 +335,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-
