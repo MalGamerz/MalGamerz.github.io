@@ -7,16 +7,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <style>
+        body { font-family: 'Inter', sans-serif; }
+        code, .font-mono { font-family: 'JetBrains Mono', monospace; }
         [x-cloak] { display: none !important; }
-        .fade-enter { animation: fadeIn 0.3s ease-out forwards; }
+        
+        /* Smooth fade animation */
+        .fade-enter { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-[#0f172a] text-slate-300 font-sans antialiased flex flex-col min-h-screen">
+<body class="bg-[#0f172a] text-slate-300 antialiased flex flex-col min-h-screen">
 
-    <header id="dynamic-header" class="fixed w-full top-0 z-50 bg-[#0f172a] border-b border-slate-800"></header>
+    <header class="fixed w-full top-0 z-50 bg-[#0f172a]/90 backdrop-blur border-b border-slate-800 h-16 flex items-center px-8">
+        <span class="font-bold text-sky-500 tracking-wider">CSC402 MODULE 5</span>
+    </header>
 
     <main class="flex-grow pt-32 pb-20 px-4 md:px-8 relative" x-data="quizEngine()">
         <div class="max-w-3xl mx-auto">
@@ -35,7 +40,7 @@
             </div>
 
             <div x-show="state === 'quiz'" x-cloak class="fade-enter">
-                
+
                 <div class="mb-8">
                     <div class="flex justify-between text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
                         <span>Question <span x-text="currentIndex + 1"></span> of <span x-text="questions.length"></span></span>
@@ -47,7 +52,7 @@
                 </div>
 
                 <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-2xl p-6 md:p-10 relative min-h-[400px] flex flex-col">
-                    
+
                     <div class="mb-6">
                         <span class="px-3 py-1 rounded text-xs font-bold uppercase tracking-wider bg-slate-700 text-slate-300" x-text="questions[currentIndex].category"></span>
                     </div>
@@ -63,7 +68,7 @@
                                     <div class="w-8 h-8 rounded-full border-2 border-slate-500 mr-4 flex items-center justify-center text-xs font-bold text-slate-500 group-hover:border-sky-500 group-hover:text-sky-400 transition"
                                          :class="{'bg-sky-500 border-sky-500 text-white': userAnswers[currentIndex] === idx}"
                                          x-text="['A','B','C','D'][idx]"></div>
-                                    <span class="text-lg font-mono" x-html="option"></span>
+                                    <span class="text-lg font-mono text-slate-300 group-hover:text-white" x-html="option"></span>
                                 </button>
                             </template>
                         </div>
@@ -73,8 +78,9 @@
                         <div class="flex-grow flex flex-col justify-center">
                             <input type="text" x-model="textInput" 
                                    @input="userAnswers[currentIndex] = textInput"
+                                   @keydown.enter="nextQuestion()"
                                    placeholder="Type your answer here..." 
-                                   class="w-full bg-[#0b1120] border-2 border-slate-700 rounded-xl px-6 py-4 text-white text-xl font-mono focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition">
+                                   class="w-full bg-[#0b1120] border-2 border-slate-700 rounded-xl px-6 py-4 text-white text-xl font-mono focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition placeholder-slate-600">
                             <p class="text-sm text-slate-500 mt-4 text-center">Press Enter or click Next to save.</p>
                         </div>
                     </template>
@@ -86,7 +92,7 @@
                             ← Back
                         </button>
                         <button @click="nextQuestion()" 
-                                class="bg-white text-slate-900 hover:bg-sky-50 font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:scale-100"
+                                class="bg-white text-slate-900 hover:bg-sky-50 font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
                                 :disabled="userAnswers[currentIndex] === undefined || userAnswers[currentIndex] === ''">
                             <span x-text="currentIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question →'"></span>
                         </button>
@@ -107,29 +113,35 @@
                         <div class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-sky-500 my-6" x-text="scorePercentage + '%'"></div>
                         <p class="text-xl text-slate-400" x-text="getFeedback()"></p>
                     </div>
-                    
+
                     <div class="p-8 md:p-12">
                         <h3 class="text-white font-bold text-xl mb-6">Detailed Breakdown</h3>
                         <div class="space-y-4">
                             <template x-for="(q, idx) in questions" :key="idx">
-                                <div class="p-4 rounded-xl border flex items-start gap-4"
+                                <div class="p-4 rounded-xl border flex items-start gap-4 transition hover:bg-slate-800/50"
                                      :class="isCorrect(idx) ? 'bg-green-900/10 border-green-500/20' : 'bg-red-900/10 border-red-500/20'">
                                     <div class="shrink-0 mt-1">
                                         <span x-show="isCorrect(idx)" class="text-green-400 text-xl">✅</span>
                                         <span x-show="!isCorrect(idx)" class="text-red-400 text-xl">❌</span>
                                     </div>
-                                    <div>
-                                        <p class="text-white font-bold text-sm mb-1" x-html="q.text"></p>
-                                        <p class="text-xs text-slate-400">
-                                            Your Answer: <span class="font-mono text-white" x-text="formatAnswer(idx)"></span>
-                                            <span x-show="!isCorrect(idx)" class="ml-2 text-green-400 block mt-1">Correct Answer: <span class="font-mono" x-text="formatCorrectAnswer(idx)"></span></span>
-                                        </p>
+                                    <div class="w-full">
+                                        <p class="text-white font-bold text-sm mb-2" x-html="q.text"></p>
+                                        <div class="flex flex-col md:flex-row gap-4 text-xs">
+                                            <div class="flex-1">
+                                                <span class="text-slate-500 block mb-1">Your Answer:</span>
+                                                <span class="font-mono text-white bg-slate-800 px-2 py-1 rounded border border-slate-600" x-text="formatAnswer(idx)"></span>
+                                            </div>
+                                            <div class="flex-1" x-show="!isCorrect(idx)">
+                                                <span class="text-green-400 block mb-1">Correct Answer:</span>
+                                                <span class="font-mono text-green-300 bg-green-900/30 px-2 py-1 rounded border border-green-500/30" x-text="formatCorrectAnswer(idx)"></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </template>
                         </div>
                         <div class="mt-12 text-center">
-                            <button @click="resetQuiz()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-8 py-3 rounded-full transition">Try Again</button>
+                            <button @click="resetQuiz()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-8 py-3 rounded-full transition shadow-lg">Try Again</button>
                         </div>
                     </div>
                 </div>
@@ -138,18 +150,19 @@
         </div>
     </main>
 
-    <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800 pt-16 pb-8"></footer>
+    <footer class="bg-[#0b1120] border-t border-slate-800 pt-12 pb-8 text-center text-slate-600 text-sm">
+        <p>&copy; 2023 Computer Science Department</p>
+    </footer>
 
-    <script src="script.js"></script>
     <script>
         function quizEngine() {
             return {
                 state: 'intro', // intro, quiz, result
                 currentIndex: 0,
                 textInput: '',
-                userAnswers: [],
+                userAnswers: [], // Stores user responses
                 scorePercentage: 0,
-                
+
                 // --- THE QUESTION BANK ---
                 questions: [
                     // TOPIC 5.1: Intro & Memory
@@ -212,7 +225,7 @@
                         options: ['It returns 0', 'It automatically resizes the array', 'Index Out of Bounds (Undefined Behavior)', 'It returns -1'],
                         correct: 2
                     },
-                    
+
                     // TOPIC 5.3: Looping
                     {
                         category: '5.3 Loops',
@@ -224,16 +237,17 @@
                         category: '5.3 Logic',
                         type: 'mcq',
                         text: 'Which loop correctly calculates the sum of an array <code>arr</code> of size <code>N</code>?',
+                        // NOTE: using &lt; instead of < to prevent HTML rendering issues
                         options: [
-                            'for(int i=0; i<=N; i++) sum += arr[i];',
-                            'for(int i=1; i<N; i++) sum += arr[i];',
-                            'for(int i=0; i<N; i++) sum += arr[i];',
-                            'for(int i=0; i<N; i++) sum = arr[i];'
+                            'for(int i=0; i&lt;=N; i++) sum += arr[i];', // goes out of bounds
+                            'for(int i=1; i&lt;N; i++) sum += arr[i];',  // skips index 0
+                            'for(int i=0; i&lt;N; i++) sum += arr[i];',  // Correct
+                            'for(int i=0; i&lt;N; i++) sum = arr[i];'    // overwrites sum
                         ],
                         correct: 2
                     },
 
-                    // TOPIC 5.3: Strings
+                    // TOPIC 5.6: Strings
                     {
                         category: '5.6 Strings',
                         type: 'mcq',
@@ -246,9 +260,9 @@
                         type: 'mcq',
                         text: 'How many bytes are needed to store the string <code>"Hello"</code>?',
                         options: ['5 bytes', '6 bytes', '4 bytes', '8 bytes'],
-                        correct: 1 // 5 chars + 1 null
+                        correct: 1 // 5 chars + 1 null terminator
                     },
-                    
+
                     // ADVANCED / TRICKY
                     {
                         category: 'Logic Trace',
@@ -286,9 +300,10 @@
                 },
 
                 nextQuestion() {
+                    // Logic to move to next or finish
                     if (this.currentIndex < this.questions.length - 1) {
                         this.currentIndex++;
-                        // If next question is text input, pre-fill if existing answer, else clear
+                        // If next is input, sync the text field with stored answer (if any)
                         if(this.questions[this.currentIndex].type === 'input') {
                             this.textInput = this.userAnswers[this.currentIndex] || '';
                         }
@@ -309,14 +324,18 @@
                 calculateScore() {
                     let correctCount = 0;
                     this.questions.forEach((q, i) => {
+                        // Check MCQ
                         if (q.type === 'mcq') {
                             if (this.userAnswers[i] === q.correct) correctCount++;
-                        } else if (q.type === 'input') {
-                            // Check if user input matches any of the valid correct string options
+                        } 
+                        // Check Input
+                        else if (q.type === 'input') {
+                            // Normalize answer: trim whitespace
                             const userTxt = (this.userAnswers[i] || '').trim();
                             if (q.correct.includes(userTxt)) correctCount++;
                         }
                     });
+                    
                     this.scorePercentage = Math.round((correctCount / this.questions.length) * 100);
                     this.state = 'result';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -325,23 +344,33 @@
                 isCorrect(idx) {
                     const q = this.questions[idx];
                     const ans = this.userAnswers[idx];
+                    
                     if (q.type === 'mcq') return ans === q.correct;
                     if (q.type === 'input') return q.correct.includes((ans || '').trim());
                     return false;
                 },
 
+                // Helpers for Result Screen
                 formatAnswer(idx) {
                     const q = this.questions[idx];
                     const ans = this.userAnswers[idx];
+                    
                     if (ans === undefined || ans === '') return '(No Answer)';
-                    if (q.type === 'mcq') return q.options[ans];
+                    if (q.type === 'mcq') {
+                        // We need to decode html entities for display if we want, 
+                        // but sticking to raw string is safer for simplicity here.
+                        // However, since options contain &lt;, let's use a temp element to decode if needed,
+                        // or just rely on x-text/x-html. 
+                        // Here we return the raw string from options array.
+                        return q.options[ans].replace(/&lt;/g, '<'); 
+                    }
                     return ans;
                 },
 
                 formatCorrectAnswer(idx) {
                     const q = this.questions[idx];
-                    if (q.type === 'mcq') return q.options[q.correct];
-                    return q.correct[0];
+                    if (q.type === 'mcq') return q.options[q.correct].replace(/&lt;/g, '<');
+                    return q.correct[0]; // Return first valid text option
                 },
 
                 getFeedback() {
