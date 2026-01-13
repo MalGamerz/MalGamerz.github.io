@@ -3,55 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSC402 Arrays | Tutorials</title>
+    <title>CSC402 Arrays | Advanced Labs</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        [x-cloak] { display: none !important; }
+        .lab-card { transition: all 0.3s ease; }
+        .lab-card:hover { border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 30px -5px rgba(14, 165, 233, 0.15); }
+    </style>
 </head>
-<body class="bg-[#0f172a] text-slate-300 font-sans flex flex-col min-h-screen">
+<body class="bg-[#0f172a] text-slate-300 font-sans antialiased flex flex-col min-h-screen">
 
-    <header id="dynamic-header" class="fixed w-full top-0 z-50 bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-800"></header>
+    <header id="dynamic-header" class="fixed w-full top-0 z-50 bg-[#0f172a] border-b border-slate-800"></header>
 
-    <main class="flex-grow pt-28 pb-20 px-4">
-        <div class="max-w-6xl mx-auto">
-            <h1 class="text-4xl font-bold text-white mb-2 text-center">Video Classroom</h1>
-            <p class="text-center text-slate-500 mb-12">Watch these step-by-step guides to master Chapter 5.</p>
+    <main class="flex-grow pt-32 pb-20 px-4 md:px-8">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="text-center mb-16">
+                <h1 class="text-4xl md:text-6xl font-black text-white mb-6">Advanced <span class="text-sky-500">Engineering Labs</span></h1>
+                <p class="text-xl text-slate-400 max-w-2xl mx-auto">These aren't simple quizzes. You will simulate the OS memory manager, construct algorithms, and manually trace CPU execution.</p>
+            </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <div class="glow-box rounded-xl overflow-hidden p-4 bg-[#1e293b]">
-                    <div class="aspect-video bg-black rounded-lg mb-4 flex items-center justify-center border border-slate-700">
-                        <span class="text-slate-500 text-sm">[ Embed Video 1: Concepts ]</span>
+            <div class="grid xl:grid-cols-2 gap-8">
+
+                <div class="col-span-1 xl:col-span-2 bg-[#1e293b] rounded-2xl border border-slate-700 shadow-xl overflow-hidden flex flex-col lab-card" x-data="memoryLab()">
+                    <div class="bg-slate-900/50 p-6 border-b border-slate-800 flex justify-between items-center">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-bold text-sky-400 uppercase tracking-widest bg-sky-900/30 px-2 py-0.5 rounded">Lab 01</span>
+                                <span class="text-xs font-mono text-slate-500">Memory Allocation</span>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">The Memory Architect</h2>
+                        </div>
+                        <div class="text-right">
+                            <button @click="reset()" class="text-xs text-slate-500 hover:text-white underline">Reset Simulation</button>
+                        </div>
                     </div>
-                    <h3 class="text-white font-bold text-lg">1. The Concept</h3>
-                    <p class="text-sm text-slate-400 mt-2">Visualizing memory and understanding why we use arrays.</p>
-                    <span class="inline-block mt-3 px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded">Theory</span>
+
+                    <div class="p-8 grid md:grid-cols-2 gap-12">
+                        <div>
+                            <p class="text-sm text-slate-400 mb-4"><strong>Objective:</strong> Manually populate the RAM blocks based on this initialization code. Be careful with implicit values.</p>
+                            <div class="bg-black p-4 rounded-xl border border-slate-700 font-mono text-lg text-white mb-6">
+                                <span class="text-purple-400">int</span> <span class="text-sky-400">data</span>[4] = {<span class="text-yellow-400">10</span>, <span class="text-yellow-400">20</span>};
+                            </div>
+                            
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Data Value Palette (Click to Select)</p>
+                            <div class="flex gap-3">
+                                <template x-for="val in palette">
+                                    <button @click="selectedVal = val" 
+                                            class="w-16 h-12 rounded-lg border-2 font-mono font-bold text-lg transition transform active:scale-95"
+                                            :class="selectedVal === val ? 'bg-sky-600 border-sky-400 text-white shadow-[0_0_15px_rgba(14,165,233,0.5)]' : 'bg-slate-800 border-slate-600 hover:border-slate-500'">
+                                        <span x-text="val"></span>
+                                    </button>
+                                </template>
+                            </div>
+                            <div class="mt-4 text-xs text-slate-500">
+                                Selected: <span class="font-bold text-white" x-text="selectedVal || 'None'"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">System RAM (4 Bytes per Block)</p>
+                            <div class="space-y-2">
+                                <template x-for="(slot, idx) in memorySlots" :key="idx">
+                                    <div @click="fillSlot(idx)" 
+                                         class="flex items-center gap-4 group cursor-pointer">
+                                        <div class="w-16 text-right font-mono text-xs text-slate-500" x-text="'0x' + (100 + (idx * 4))"></div>
+                                        <div class="flex-grow h-14 bg-slate-900 rounded-lg border-2 flex items-center justify-between px-4 transition"
+                                             :class="slot.val !== null ? 'border-sky-500/50 bg-sky-900/10' : 'border-slate-700 group-hover:border-slate-600'">
+                                            <span class="text-xs font-bold text-slate-600" x-text="'[' + idx + ']'"></span>
+                                            <span class="text-xl font-mono font-bold text-white" x-text="slot.val !== null ? slot.val : '?'"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <button @click="check()" class="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition shadow-lg">Verify Allocation</button>
+                            <p x-text="message" class="text-center mt-3 font-bold text-sm" :class="status === 'success' ? 'text-green-400' : 'text-red-400'"></p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="glow-box rounded-xl overflow-hidden p-4 bg-[#1e293b]">
-                    <div class="aspect-video bg-black rounded-lg mb-4 flex items-center justify-center border border-slate-700">
-                        <span class="text-slate-500 text-sm">[ Embed Video 2: Coding ]</span>
+                <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-xl overflow-hidden flex flex-col lab-card" x-data="logicLab()">
+                    <div class="bg-slate-900/50 p-6 border-b border-slate-800">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-purple-400 uppercase tracking-widest bg-purple-900/30 px-2 py-0.5 rounded">Lab 02</span>
+                            <span class="text-xs font-mono text-slate-500">Algorithm Design</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Algorithm Constructor</h2>
+                        <p class="text-sm text-slate-400 mt-2">Construct a loop to <strong>Find the Maximum</strong> value. Click blocks to add them to the workspace. Avoid the logic traps.</p>
                     </div>
-                    <h3 class="text-white font-bold text-lg">2. Live Coding</h3>
-                    <p class="text-sm text-slate-400 mt-2">Follow along as we write a program to calculate student averages.</p>
-                    <span class="inline-block mt-3 px-2 py-1 bg-sky-500/20 text-sky-400 text-xs rounded">Practical</span>
+
+                    <div class="p-6 flex-grow flex flex-col">
+                        <div class="bg-black/50 rounded-xl border-2 border-dashed border-slate-700 p-4 mb-6 min-h-[200px] flex flex-col gap-2 relative">
+                            <span x-show="workspace.length === 0" class="absolute inset-0 flex items-center justify-center text-slate-600 italic pointer-events-none">Workspace Empty</span>
+                            <template x-for="(block, idx) in workspace" :key="idx">
+                                <div class="bg-slate-800 px-3 py-2 rounded border border-slate-600 font-mono text-sm text-white flex justify-between items-center group">
+                                    <span x-html="block.html"></span>
+                                    <button @click="remove(idx)" class="text-red-500 opacity-0 group-hover:opacity-100 px-2">×</button>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <template x-for="block in toolbox">
+                                <button @click="add(block)" class="text-left px-3 py-2 bg-slate-700 hover:bg-slate-600 text-xs font-mono text-slate-300 rounded border border-slate-600 transition" x-html="block.html"></button>
+                            </template>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-auto">
+                            <button @click="reset()" class="text-slate-500 hover:text-white text-sm underline">Clear</button>
+                            <button @click="validate()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-2 rounded-lg transition">Run Algorithm</button>
+                        </div>
+                        <p x-text="message" class="mt-4 text-sm font-bold text-center" :class="status === 'success' ? 'text-green-400' : 'text-red-400'"></p>
+                    </div>
                 </div>
 
-                <div class="glow-box rounded-xl overflow-hidden p-4 bg-[#1e293b]">
-                    <div class="aspect-video bg-black rounded-lg mb-4 flex items-center justify-center border border-slate-700">
-                        <span class="text-slate-500 text-sm">[ Embed Video 3: Debugging ]</span>
+                <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-xl overflow-hidden flex flex-col lab-card" x-data="traceLab()">
+                    <div class="bg-slate-900/50 p-6 border-b border-slate-800">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-green-400 uppercase tracking-widest bg-green-900/30 px-2 py-0.5 rounded">Lab 03</span>
+                            <span class="text-xs font-mono text-slate-500">Manual Execution</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">The Human Compiler</h2>
+                        <p class="text-sm text-slate-400 mt-2">Trace the execution. You must input the exact value of variables at each step to proceed.</p>
                     </div>
-                    <h3 class="text-white font-bold text-lg">3. Common Errors</h3>
-                    <p class="text-sm text-slate-400 mt-2">How to fix "Index Out of Bounds" and other messy bugs.</p>
-                    <span class="inline-block mt-3 px-2 py-1 bg-red-500/20 text-red-400 text-xs rounded">Debugging</span>
+
+                    <div class="grid grid-cols-2 flex-grow">
+                        <div class="bg-[#0b1120] p-6 font-mono text-xs md:text-sm leading-loose border-r border-slate-800">
+                            <div :class="step === 0 ? 'bg-yellow-900/30 text-yellow-200 -mx-4 px-4 border-l-2 border-yellow-500' : 'text-slate-500'">int arr[] = {2, 5, 8};</div>
+                            <div :class="step === 1 ? 'bg-yellow-900/30 text-yellow-200 -mx-4 px-4 border-l-2 border-yellow-500' : 'text-slate-500'">int sum = 0;</div>
+                            <div :class="step >= 2 && step <= 4 ? 'bg-yellow-900/30 text-yellow-200 -mx-4 px-4 border-l-2 border-yellow-500' : 'text-slate-500'">for(int i=0; i&lt;3; i++) {</div>
+                            <div :class="step >= 2 && step <= 4 ? 'bg-yellow-900/30 text-yellow-200 -mx-4 px-4 border-l-2 border-yellow-500' : 'text-slate-500'">&nbsp;&nbsp;sum += arr[i];</div>
+                            <div class="text-slate-500">}</div>
+                            <div :class="step === 5 ? 'bg-green-900/30 text-green-200 -mx-4 px-4 border-l-2 border-green-500' : 'text-slate-500'">cout << sum;</div>
+                        </div>
+
+                        <div class="p-6 flex flex-col justify-center bg-[#162032]">
+                            <div class="mb-6">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Current State</div>
+                                <div class="bg-black p-4 rounded-lg border border-slate-700">
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-slate-400">i :</span>
+                                        <input type="number" x-model="inputI" class="w-16 bg-slate-800 border border-slate-600 text-white text-center rounded focus:border-green-500 outline-none" placeholder="?">
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-400">sum :</span>
+                                        <input type="number" x-model="inputSum" class="w-16 bg-slate-800 border border-slate-600 text-white text-center rounded focus:border-green-500 outline-none" placeholder="?">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button @click="checkStep()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition mb-4">Next Step →</button>
+                            <p x-text="message" class="text-center text-xs font-bold min-h-[20px]" :class="status === 'error' ? 'text-red-400' : 'text-green-400'"></p>
+                        </div>
+                    </div>
                 </div>
 
             </div>
-
         </div>
     </main>
 
-    <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800"></footer>
+    <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800 pt-16 pb-8"></footer>
+
     <script src="script.js"></script>
+
+    <script>
+        // LAB 01: MEMORY ARCHITECT
+        function memoryLab() {
+            return {
+                palette: [10, 20, 0, 'Garbage', 5, 99],
+                selectedVal: null,
+                memorySlots: [
+                    { val: null }, { val: null }, { val: null }, { val: null }
+                ],
+                status: 'idle',
+                message: '',
+
+                fillSlot(idx) {
+                    if (this.selectedVal !== null) {
+                        this.memorySlots[idx].val = this.selectedVal;
+                    }
+                },
+                check() {
+                    // Correct: [10, 20, 0, 0]
+                    // arr[4] = {10, 20} implies rest are 0.
+                    const s = this.memorySlots;
+                    if (s[0].val == 10 && s[1].val == 20 && s[2].val == 0 && s[3].val == 0) {
+                        this.status = 'success';
+                        this.message = 'Perfect! Memory Allocation Verified. (Implicit zeros handled correctly)';
+                    } else {
+                        this.status = 'error';
+                        this.message = 'Allocation Error. Remember: Partially initialized arrays fill the rest with 0.';
+                    }
+                },
+                reset() {
+                    this.memorySlots.forEach(s => s.val = null);
+                    this.selectedVal = null;
+                    this.status = 'idle';
+                    this.message = '';
+                }
+            }
+        }
+
+        // LAB 02: LOGIC CONSTRUCTOR
+        function logicLab() {
+            return {
+                workspace: [],
+                toolbox: [
+                    { id: 'init_correct', html: '<span class="text-purple-400">int</span> max = arr[0];' },
+                    { id: 'init_wrong', html: '<span class="text-purple-400">int</span> max = 0;' }, // Trap
+                    { id: 'loop_correct', html: '<span class="text-purple-400">for</span>(int i=1; i&lt;5; i++)' },
+                    { id: 'loop_wrong', html: '<span class="text-purple-400">for</span>(int i=0; i&lt;=5; i++)' }, // Trap
+                    { id: 'if_correct', html: '<span class="text-purple-400">if</span>(arr[i] > max)' },
+                    { id: 'assign_correct', html: 'max = arr[i];' }
+                ],
+                status: 'idle',
+                message: '',
+
+                add(block) {
+                    if (this.workspace.length < 4) this.workspace.push(block);
+                },
+                remove(idx) {
+                    this.workspace.splice(idx, 1);
+                },
+                validate() {
+                    const ids = this.workspace.map(b => b.id).join(',');
+                    // Correct sequence: Init -> Loop -> If -> Assign
+                    const correctSeq = 'init_correct,loop_correct,if_correct,assign_correct';
+                    
+                    if (ids === correctSeq) {
+                        this.status = 'success';
+                        this.message = 'Algorithm Valid! Logic is sound.';
+                    } else if (ids.includes('init_wrong')) {
+                        this.status = 'error';
+                        this.message = 'Logic Error: Setting max=0 fails for negative numbers.';
+                    } else if (ids.includes('loop_wrong')) {
+                        this.status = 'error';
+                        this.message = 'Runtime Error: Loop goes out of bounds.';
+                    } else {
+                        this.status = 'error';
+                        this.message = 'Sequence Incorrect. Try again.';
+                    }
+                },
+                reset() {
+                    this.workspace = [];
+                    this.status = 'idle';
+                    this.message = '';
+                }
+            }
+        }
+
+        // LAB 03: HUMAN COMPILER
+        function traceLab() {
+            return {
+                step: 0, // 0: init arr, 1: init sum, 2: i=0, 3: i=1, 4: i=2, 5: print
+                inputI: '',
+                inputSum: '',
+                status: 'idle',
+                message: 'Enter values for i and sum to start.',
+                
+                // arr = {2, 5, 8}
+                states: [
+                    { i: null, sum: 0 },    // Step 0: arr init (i is undef/null really, but lets say null)
+                    { i: null, sum: 0 },    // Step 1: sum=0
+                    { i: 0, sum: 2 },       // Step 2: loop 0 -> sum becomes 2
+                    { i: 1, sum: 7 },       // Step 3: loop 1 -> sum becomes 2+5=7
+                    { i: 2, sum: 15 },      // Step 4: loop 2 -> sum becomes 7+8=15
+                    { i: 3, sum: 15 }       // Step 5: loop ends, i becomes 3, prints 15
+                ],
+
+                checkStep() {
+                    // We simplify validation: 
+                    // To pass Step X, user must input the state AFTER Step X runs.
+                    
+                    // Logic fix: The user needs to predict the variable state at the END of the highlighted line execution
+                    
+                    let targetI, targetSum;
+                    
+                    if (this.step === 0) { targetI = ''; targetSum = ''; } // Initial dummy check not needed, just press next
+                    else if (this.step === 1) { targetI = ''; targetSum = 0; }
+                    else if (this.step === 2) { targetI = 0; targetSum = 2; }
+                    else if (this.step === 3) { targetI = 1; targetSum = 7; }
+                    else if (this.step === 4) { targetI = 2; targetSum = 15; }
+                    
+                    // For UI simplicity, let's just use strict simple validation
+                    // Sequence:
+                    // 1. Highlight 'int sum = 0'. User inputs i= - , sum=0. Click Next.
+                    // 2. Highlight Loop 1. User inputs i=0, sum=2. Click Next.
+                    // 3. Highlight Loop 2. User inputs i=1, sum=7. Click Next.
+                    // 4. Highlight Loop 3. User inputs i=2, sum=15. Click Next.
+                    
+                    // Correct Logic Map:
+                    // Current Step 0 (Start) -> Click Next -> Validates if inputs match Step 0 state? No, inputs match result of Step 0.
+                    
+                    const iVal = this.inputI === '' ? null : parseInt(this.inputI);
+                    const sVal = this.inputSum === '' ? null : parseInt(this.inputSum);
+
+                    // Map steps to expected values
+                    const expectations = [
+                        { i: null, s: null }, // 0
+                        { i: null, s: 0 },    // 1
+                        { i: 0, s: 2 },       // 2
+                        { i: 1, s: 7 },       // 3
+                        { i: 2, s: 15 },      // 4
+                        { i: 3, s: 15 }       // 5 (End)
+                    ];
+
+                    if (this.step >= 5) {
+                        this.message = "Execution Complete.";
+                        return;
+                    }
+
+                    const exp = expectations[this.step + 1];
+                    
+                    // Allow empty input for null
+                    let matchI = (exp.i === null && (this.inputI === '' || this.inputI === null)) || iVal === exp.i;
+                    let matchS = (exp.s === null && (this.inputSum === '' || this.inputSum === null)) || sVal === exp.s;
+
+                    if (matchI && matchS) {
+                        this.step++;
+                        this.status = 'success';
+                        this.message = "Trace Correct.";
+                        this.inputI = ''; // Clear for next step challenge
+                        this.inputSum = '';
+                        if(this.step === 5) this.message = "Execution Finished! Output: 15";
+                    } else {
+                        this.status = 'error';
+                        this.message = `Incorrect. Expected: i=${exp.i !== null ? exp.i : '-'}, sum=${exp.s}`;
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>
