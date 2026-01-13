@@ -82,20 +82,10 @@
                             
                             <button @click="check()" class="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition shadow-lg">Verify Allocation</button>
                             
-                            <div class="mt-4 text-center min-h-[3rem]">
+                            <div class="mt-4 text-center min-h-[4rem]">
                                 <p x-text="message" class="text-sm font-bold" :class="status === 'success' ? 'text-green-400' : 'text-red-400'"></p>
-                                
-                                <button x-show="status === 'error'" 
-                                        @click="showAnswer()" 
-                                        class="mt-2 text-xs text-sky-400 hover:text-white underline">
-                                    Give Up? Show Correct Answer
-                                </button>
-                                
-                                <div x-show="solutionRevealed" class="mt-4 p-3 bg-green-900/20 border border-green-500/30 rounded text-green-200 text-sm font-mono">
-                                    Correct: [ 10, 20, 0, 0 ]
-                                </div>
+                                <button x-show="status === 'error'" @click="showAnswer()" class="mt-2 text-xs text-sky-400 hover:text-white underline">Give Up? Show Solution</button>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -120,16 +110,22 @@
                                 </div>
                             </template>
                         </div>
+                        
                         <div class="grid grid-cols-2 gap-3 mb-6">
                             <template x-for="block in toolbox">
                                 <button @click="add(block)" class="text-left px-3 py-2 bg-slate-700 hover:bg-slate-600 text-xs font-mono text-slate-300 rounded border border-slate-600 transition" x-html="block.html"></button>
                             </template>
                         </div>
+                        
                         <div class="flex items-center justify-between mt-auto">
                             <button @click="reset()" class="text-slate-500 hover:text-white text-sm underline">Clear</button>
                             <button @click="validate()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-2 rounded-lg transition">Run Algorithm</button>
                         </div>
-                        <p x-text="message" class="mt-4 text-sm font-bold text-center" :class="status === 'success' ? 'text-green-400' : 'text-red-400'"></p>
+                        
+                        <div class="mt-4 text-center min-h-[4rem]">
+                            <p x-text="message" class="text-sm font-bold" :class="status === 'success' ? 'text-green-400' : 'text-red-400'"></p>
+                            <button x-show="status === 'error'" @click="showAnswer()" class="mt-2 text-xs text-sky-400 hover:text-white underline">Give Up? Auto-fix Sequence</button>
+                        </div>
                     </div>
                 </div>
 
@@ -142,6 +138,7 @@
                         <h2 class="text-xl font-bold text-white">The Human Compiler</h2>
                         <p class="text-sm text-slate-400 mt-2">Trace the execution. You must input the exact value of variables at each step to proceed.</p>
                     </div>
+
                     <div class="grid grid-cols-2 flex-grow">
                         <div class="bg-[#0b1120] p-6 font-mono text-xs md:text-sm leading-loose border-r border-slate-800">
                             <div :class="step === 0 ? 'bg-yellow-900/30 text-yellow-200 -mx-4 px-4 border-l-2 border-yellow-500' : 'text-slate-500'">int arr[] = {2, 5, 8};</div>
@@ -151,6 +148,7 @@
                             <div class="text-slate-500">}</div>
                             <div :class="step === 5 ? 'bg-green-900/30 text-green-200 -mx-4 px-4 border-l-2 border-green-500' : 'text-slate-500'">cout << sum;</div>
                         </div>
+
                         <div class="p-6 flex flex-col justify-center bg-[#162032]">
                             <div class="mb-6">
                                 <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Current State</div>
@@ -165,8 +163,13 @@
                                     </div>
                                 </div>
                             </div>
+
                             <button @click="checkStep()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition mb-4">Next Step →</button>
-                            <p x-text="message" class="text-center text-xs font-bold min-h-[20px]" :class="status === 'error' ? 'text-red-400' : 'text-green-400'"></p>
+                            
+                            <div class="min-h-[3rem] text-center">
+                                <p x-text="message" class="text-xs font-bold" :class="status === 'error' ? 'text-red-400' : 'text-green-400'"></p>
+                                <button x-show="status === 'error'" @click="fillAnswer()" class="mt-2 text-xs text-sky-400 hover:text-white underline">Stuck? Fill Answer</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -180,7 +183,7 @@
     <script src="script.js"></script>
 
     <script>
-        // LAB 01: MEMORY ARCHITECT (Enhanced Feedback)
+        // LAB 01: MEMORY ARCHITECT
         function memoryLab() {
             return {
                 palette: [10, 20, 0, 'Garbage', 5, 99],
@@ -199,38 +202,23 @@
                 },
                 check() {
                     const s = this.memorySlots;
-                    
-                    // 1. Check for basic emptiness
                     if (s.some(slot => slot.val === null)) {
                         this.status = 'error';
                         this.message = 'Please fill all memory slots first.';
                         return;
                     }
-
-                    // 2. Check correctness
                     if (s[0].val == 10 && s[1].val == 20 && s[2].val == 0 && s[3].val == 0) {
                         this.status = 'success';
                         this.message = 'Perfect! Memory Allocation Verified.';
-                        this.solutionRevealed = false; // Hide hint if they got it right
-                    } 
-                    // 3. Diagnose Specific Errors
-                    else {
+                        this.solutionRevealed = false;
+                    } else {
                         this.status = 'error';
-                        // Check declaration part
-                        if (s[0].val != 10 || s[1].val != 20) {
-                            this.message = "Incorrect Declaration. Indices 0 and 1 should match the {10, 20} initialization.";
-                        } 
-                        // Check implicit zeros
-                        else if (s[2].val != 0 || s[3].val != 0) {
-                            this.message = "Incorrect Implicit Values. Partial initialization sets remaining elements to 0, not Garbage.";
-                        } 
-                        else {
-                            this.message = "Allocation Incorrect. Try again or check the solution.";
-                        }
+                        if (s[0].val != 10 || s[1].val != 20) this.message = "Incorrect Declaration. Indices 0 and 1 should match initialization.";
+                        else if (s[2].val != 0 || s[3].val != 0) this.message = "Incorrect Implicit Values. Remember partial init sets rest to 0.";
+                        else this.message = "Allocation Incorrect. Try again or check solution.";
                     }
                 },
                 showAnswer() {
-                    this.solutionRevealed = true;
                     this.memorySlots[0].val = 10;
                     this.memorySlots[1].val = 20;
                     this.memorySlots[2].val = 0;
@@ -243,7 +231,6 @@
                     this.selectedVal = null;
                     this.status = 'idle';
                     this.message = '';
-                    this.solutionRevealed = false;
                 }
             }
         }
@@ -287,6 +274,16 @@
                         this.message = 'Sequence Incorrect. Try again.';
                     }
                 },
+                showAnswer() {
+                    this.workspace = []; // Clear
+                    // Push correct blocks in order
+                    this.workspace.push(this.toolbox[0]); // init_correct
+                    this.workspace.push(this.toolbox[2]); // loop_correct
+                    this.workspace.push(this.toolbox[4]); // if_correct
+                    this.workspace.push(this.toolbox[5]); // assign_correct
+                    this.status = 'idle';
+                    this.message = 'Correct sequence applied. Try running it!';
+                },
                 reset() {
                     this.workspace = [];
                     this.status = 'idle';
@@ -309,7 +306,7 @@
                     const sVal = this.inputSum === '' ? null : parseInt(this.inputSum);
 
                     const expectations = [
-                        { i: null, s: null },
+                        { i: null, s: null }, // Dummy
                         { i: null, s: 0 },
                         { i: 0, s: 2 },
                         { i: 1, s: 7 },
@@ -336,6 +333,23 @@
                     } else {
                         this.status = 'error';
                         this.message = `Incorrect. Expected: i=${exp.i !== null ? exp.i : '-'}, sum=${exp.s}`;
+                    }
+                },
+                fillAnswer() {
+                    const expectations = [
+                        { i: null, s: null },
+                        { i: null, s: 0 },
+                        { i: 0, s: 2 },
+                        { i: 1, s: 7 },
+                        { i: 2, s: 15 },
+                        { i: 3, s: 15 }
+                    ];
+                    if (this.step < 5) {
+                        const exp = expectations[this.step + 1];
+                        this.inputI = exp.i !== null ? exp.i : '';
+                        this.inputSum = exp.s;
+                        this.status = 'idle';
+                        this.message = "Values filled. Click Next Step.";
                     }
                 }
             }
