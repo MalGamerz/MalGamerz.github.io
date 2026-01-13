@@ -12,6 +12,9 @@
         [x-cloak] { display: none !important; }
         .fade-enter { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Pulse animation for low time */
+        .animate-pulse-red { animation: pulseRed 1s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulseRed { 0%, 100% { opacity: 1; color: #ef4444; } 50% { opacity: .5; } }
     </style>
 </head>
 <body class="bg-[#0f172a] text-slate-300 font-sans antialiased flex flex-col min-h-screen">
@@ -26,30 +29,63 @@
                     <span class="text-5xl">⚡️</span>
                 </div>
                 <h1 class="text-4xl md:text-6xl font-black text-white mb-6">Array <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">Mastery</span> Quiz</h1>
-                <p class="text-xl text-slate-400 mb-12 max-w-xl mx-auto leading-relaxed">
-                    15 Questions. From basic memory concepts to complex looping logic. <br>Are you ready to prove your skills?
+                <p class="text-xl text-slate-400 mb-8 max-w-xl mx-auto leading-relaxed">
+                    15 Questions. Randomized.<br>
+                    <span class="text-white font-bold">⏱️ Time Limit: 10 Minutes.</span>
                 </p>
-                <button @click="startQuiz()" class="bg-sky-500 hover:bg-sky-400 text-white text-xl font-bold px-12 py-4 rounded-full shadow-lg shadow-sky-500/20 transition transform hover:scale-105">
-                    Start Challenge
-                </button>
+                <div class="flex justify-center gap-4">
+                    <button @click="startQuiz()" class="bg-sky-500 hover:bg-sky-400 text-white text-xl font-bold px-12 py-4 rounded-full shadow-lg shadow-sky-500/20 transition transform hover:scale-105">
+                        Start Challenge
+                    </button>
+                </div>
             </div>
 
             <div x-show="state === 'quiz'" x-cloak class="fade-enter">
 
-                <div class="mb-8">
-                    <div class="flex justify-between text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
-                        <span>Question <span x-text="currentIndex + 1"></span> of <span x-text="questions.length"></span></span>
-                        <span x-text="Math.round(((currentIndex + 1) / questions.length) * 100) + '%'"></span>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
+                    
+                    <div class="flex-grow md:max-w-md">
+                        <div class="flex justify-between text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                            <span>Progress</span>
+                            <span x-text="Math.round((answeredCount() / questions.length) * 100) + '%'"></span>
+                        </div>
+                        <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-sky-500 transition-all duration-500 ease-out" :style="'width: ' + ((answeredCount() / questions.length) * 100) + '%'"></div>
+                        </div>
                     </div>
-                    <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-sky-500 transition-all duration-500 ease-out" :style="'width: ' + (((currentIndex + 1) / questions.length) * 100) + '%'"></div>
+
+                    <div class="flex items-center gap-2 bg-slate-800/80 rounded-lg px-4 py-2 border border-slate-700"
+                         :class="{'border-red-500/50 bg-red-900/20': timeLeft <= 60}">
+                        <span class="text-xl">⏱️</span>
+                        <span class="text-2xl font-mono font-bold text-white" 
+                              :class="{'animate-pulse-red': timeLeft <= 60}"
+                              x-text="formatTime(timeLeft)"></span>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center md:text-left">Question Map</p>
+                    <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                        <template x-for="(q, idx) in questions" :key="idx">
+                            <button @click="currentIndex = idx; if(questions[currentIndex].type === 'input') textInput = userAnswers[currentIndex] || '';"
+                                    class="w-10 h-10 rounded-lg text-sm font-bold transition border-2 flex items-center justify-center relative group"
+                                    :class="{
+                                        'bg-sky-500 border-sky-500 text-white shadow-[0_0_15px_rgba(14,165,233,0.5)] scale-110 z-10': currentIndex === idx,
+                                        'bg-sky-900/20 border-sky-500/50 text-sky-400': currentIndex !== idx && hasAnswered(idx),
+                                        'bg-slate-800 border-slate-700 text-slate-600 hover:border-slate-500': currentIndex !== idx && !hasAnswered(idx)
+                                    }">
+                                <span x-text="idx + 1"></span>
+                                <span x-show="hasAnswered(idx)" class="absolute -top-1 -right-1 w-2 h-2 bg-sky-400 rounded-full"></span>
+                            </button>
+                        </template>
                     </div>
                 </div>
 
                 <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-2xl p-6 md:p-10 relative min-h-[400px] flex flex-col">
 
-                    <div class="mb-6">
+                    <div class="mb-6 flex justify-between items-start">
                         <span class="px-3 py-1 rounded text-xs font-bold uppercase tracking-wider bg-slate-700 text-slate-300" x-text="questions[currentIndex].category"></span>
+                        <span class="text-xs text-slate-500 font-mono">ID: #<span x-text="currentIndex + 1"></span></span>
                     </div>
 
                     <h2 class="text-2xl md:text-3xl font-bold text-white mb-8 leading-snug" x-html="questions[currentIndex].text"></h2>
@@ -60,7 +96,7 @@
                                 <button @click="selectAnswer(idx)" 
                                         class="w-full text-left p-4 rounded-xl border border-slate-700 hover:bg-slate-800 transition flex items-center group"
                                         :class="{'bg-sky-900/30 border-sky-500 ring-1 ring-sky-500': userAnswers[currentIndex] === idx}">
-                                    <div class="w-8 h-8 rounded-full border-2 border-slate-500 mr-4 flex items-center justify-center text-xs font-bold text-slate-500 group-hover:border-sky-500 group-hover:text-sky-400 transition"
+                                    <div class="w-8 h-8 shrink-0 rounded-full border-2 border-slate-500 mr-4 flex items-center justify-center text-xs font-bold text-slate-500 group-hover:border-sky-500 group-hover:text-sky-400 transition"
                                          :class="{'bg-sky-500 border-sky-500 text-white': userAnswers[currentIndex] === idx}"
                                          x-text="['A','B','C','D'][idx]"></div>
                                     <span class="text-lg font-mono" x-html="option"></span>
@@ -75,7 +111,7 @@
                                    @input="userAnswers[currentIndex] = textInput"
                                    placeholder="Type your answer here..." 
                                    class="w-full bg-[#0b1120] border-2 border-slate-700 rounded-xl px-6 py-4 text-white text-xl font-mono focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition">
-                            <p class="text-sm text-slate-500 mt-4 text-center">Press Enter or click Next to save.</p>
+                            <p class="text-sm text-slate-500 mt-4 text-center">Press Enter or click Next to submit.</p>
                         </div>
                     </template>
 
@@ -85,11 +121,20 @@
                                 :disabled="currentIndex === 0">
                             ← Back
                         </button>
-                        <button @click="nextQuestion()" 
-                                class="bg-white text-slate-900 hover:bg-sky-50 font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:scale-100"
-                                :disabled="userAnswers[currentIndex] === undefined || userAnswers[currentIndex] === ''">
-                            <span x-text="currentIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question →'"></span>
-                        </button>
+                        
+                        <template x-if="currentIndex === questions.length - 1">
+                            <button @click="calculateScore()" 
+                                    class="bg-green-600 hover:bg-green-500 text-white font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105">
+                                Finish Quiz & Submit
+                            </button>
+                        </template>
+
+                        <template x-if="currentIndex < questions.length - 1">
+                            <button @click="nextQuestion()" 
+                                    class="bg-white text-slate-900 hover:bg-sky-50 font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105">
+                                Next Question →
+                            </button>
+                        </template>
                     </div>
 
                 </div>
@@ -97,39 +142,55 @@
 
             <div x-show="state === 'result'" x-cloak class="fade-enter">
                 <div class="bg-[#1e293b] rounded-3xl border border-slate-700 shadow-2xl overflow-hidden">
-                    <div class="bg-slate-900/50 p-12 text-center border-b border-slate-800">
-                        <div class="inline-block mb-4 text-6xl">
-                            <span x-show="scorePercentage >= 80">🏆</span>
-                            <span x-show="scorePercentage >= 50 && scorePercentage < 80">👍</span>
-                            <span x-show="scorePercentage < 50">📚</span>
-                        </div>
-                        <h2 class="text-4xl font-black text-white mb-2">Quiz Complete!</h2>
-                        <div class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-sky-500 my-6" x-text="scorePercentage + '%'"></div>
-                        <p class="text-xl text-slate-400" x-text="getFeedback()"></p>
+                    
+                    <div class="bg-slate-900/50 p-8 text-center border-b border-slate-800">
+                        <div x-show="timeRunOut" class="inline-block bg-red-500/20 text-red-400 px-3 py-1 rounded text-xs font-bold mb-4 border border-red-500/30">⏰ Time's Up!</div>
+                        <h2 class="text-2xl font-black text-white mb-2">Quiz Complete!</h2>
+                        <div class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-sky-500 my-2" x-text="scorePercentage + '%'"></div>
+                        <p class="text-md text-slate-400" x-text="getFeedback()"></p>
                     </div>
 
-                    <div class="p-8 md:p-12">
-                        <h3 class="text-white font-bold text-xl mb-6">Detailed Breakdown</h3>
-                        <div class="space-y-4">
-                            <template x-for="(q, idx) in questions" :key="idx">
-                                <div class="p-4 rounded-xl border flex items-start gap-4"
-                                     :class="isCorrect(idx) ? 'bg-green-900/10 border-green-500/20' : 'bg-red-900/10 border-red-500/20'">
-                                    <div class="shrink-0 mt-1">
-                                        <span x-show="isCorrect(idx)" class="text-green-400 text-xl">✅</span>
-                                        <span x-show="!isCorrect(idx)" class="text-red-400 text-xl">❌</span>
-                                    </div>
-                                    <div>
-                                        <p class="text-white font-bold text-sm mb-1" x-html="q.text"></p>
-                                        <p class="text-xs text-slate-400">
-                                            Your Answer: <span class="font-mono text-white" x-text="formatAnswer(idx)"></span>
-                                            <span x-show="!isCorrect(idx)" class="ml-2 text-green-400 block mt-1">Correct Answer: <span class="font-mono" x-text="formatCorrectAnswer(idx)"></span></span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </template>
+                    <div class="p-6 md:p-10 relative min-h-[300px] flex flex-col">
+                        
+                        <div class="flex justify-between text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest">
+                            <span>Reviewing Question <span x-text="reviewIndex + 1"></span> of <span x-text="questions.length"></span></span>
+                            <span x-show="isCorrect(reviewIndex)" class="text-green-400">Correct ✅</span>
+                            <span x-show="!isCorrect(reviewIndex)" class="text-red-400">Incorrect ❌</span>
                         </div>
-                        <div class="mt-12 text-center">
-                            <button @click="resetQuiz()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-8 py-3 rounded-full transition">Try Again</button>
+
+                        <h3 class="text-xl md:text-2xl font-bold text-white mb-6" x-html="questions[reviewIndex].text"></h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                            <div class="p-4 rounded-xl border" 
+                                 :class="isCorrect(reviewIndex) ? 'bg-green-900/10 border-green-500/30' : 'bg-red-900/10 border-red-500/30'">
+                                <p class="text-xs text-slate-400 uppercase font-bold mb-2">Your Answer</p>
+                                <p class="font-mono text-white text-lg break-words" x-text="formatAnswer(reviewIndex)"></p>
+                            </div>
+
+                            <div x-show="!isCorrect(reviewIndex)" class="p-4 rounded-xl border bg-slate-800/50 border-slate-600">
+                                <p class="text-xs text-slate-400 uppercase font-bold mb-2">Correct Answer</p>
+                                <p class="font-mono text-green-400 text-lg break-words" x-text="formatCorrectAnswer(reviewIndex)"></p>
+                            </div>
+                            
+                            <div x-show="isCorrect(reviewIndex)" class="hidden md:block p-4 rounded-xl border bg-slate-800/30 border-slate-700 flex items-center justify-center">
+                                <p class="text-green-400 font-bold">Good Job! 👍</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mt-auto pt-6 border-t border-slate-800">
+                            <button @click="reviewIndex > 0 ? reviewIndex-- : null" 
+                                    class="text-slate-400 hover:text-white font-bold px-4 py-2 rounded-lg transition disabled:opacity-30"
+                                    :disabled="reviewIndex === 0">
+                                ← Previous
+                            </button>
+                            
+                            <button @click="resetQuiz()" class="text-xs text-slate-500 hover:text-slate-300">Restart Quiz</button>
+
+                            <button @click="reviewIndex < questions.length - 1 ? reviewIndex++ : null" 
+                                    class="bg-white text-slate-900 hover:bg-sky-50 font-bold px-6 py-2 rounded-full shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:scale-100"
+                                    :disabled="reviewIndex === questions.length - 1">
+                                Next →
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -144,15 +205,23 @@
     <script>
         function quizEngine() {
             return {
-                state: 'intro', // intro, quiz, result
+                state: 'intro', 
                 currentIndex: 0,
+                reviewIndex: 0,
                 textInput: '',
                 userAnswers: [],
+                questions: [], 
                 scorePercentage: 0,
+                
+                // TIMER VARIABLES
+                timer: null,
+                totalTime: 600, // 10 minutes in seconds
+                timeLeft: 600,
+                timeRunOut: false,
 
-                // --- THE QUESTION BANK ---
-                questions: [
-                    // TOPIC 5.1: Intro & Memory
+                // --- MASTER QUESTION BANK ---
+                masterQuestions: [
+                    // TOPIC 5.1
                     {
                         category: '5.1 Concept',
                         type: 'mcq',
@@ -165,7 +234,7 @@
                         type: 'mcq',
                         text: 'If an integer (4 bytes) at index [0] is at address 1000, what is the address of index [3]?',
                         options: ['1003', '1004', '1012', '1008'],
-                        correct: 2 // 1000 + (3 * 4) = 1012
+                        correct: 2 
                     },
                     {
                         category: '5.1 Logic',
@@ -174,14 +243,13 @@
                         options: ['Because C++ was invented in year 0', 'It represents the offset from the start address', 'It saves memory space', 'It makes the code look cooler'],
                         correct: 1
                     },
-
-                    // TOPIC 5.2: Declaration
+                    // TOPIC 5.2
                     {
                         category: '5.2 Syntax',
                         type: 'mcq',
                         text: 'Which of the following array declarations is <strong>INVALID</strong>?',
                         options: ['int arr[5];', 'int arr[] = {1, 2, 3};', 'int arr[3] = {1, 2, 3};', 'int arr[3] = {1, 2, 3, 4};'],
-                        correct: 3 // Too many initializers
+                        correct: 3 
                     },
                     {
                         category: '5.2 Syntax',
@@ -196,8 +264,7 @@
                         text: 'Write code to declare an integer array named <code>prices</code> with size 10.',
                         correct: ['int prices[10];', 'int prices[10]']
                     },
-
-                    // TOPIC 5.3: Accessing
+                    // TOPIC 5.3
                     {
                         category: '5.3 Access',
                         type: 'mcq',
@@ -212,8 +279,6 @@
                         options: ['It returns 0', 'It automatically resizes the array', 'Index Out of Bounds (Undefined Behavior)', 'It returns -1'],
                         correct: 2
                     },
-
-                    // TOPIC 5.3: Looping
                     {
                         category: '5.3 Loops',
                         type: 'input',
@@ -225,7 +290,6 @@
                         type: 'mcq',
                         text: 'Which loop correctly calculates the sum of an array <code>arr</code> of size <code>N</code>?',
                         options: [
-                            // FIX APPLIED HERE: Using HTML entities &lt; to ensure browser renders correctly
                             'for(int i=0; i &lt;= N; i++) sum += arr[i];',
                             'for(int i=1; i &lt; N; i++) sum += arr[i];',
                             'for(int i=0; i &lt; N; i++) sum += arr[i];',
@@ -233,8 +297,7 @@
                         ],
                         correct: 2
                     },
-
-                    // TOPIC 5.6: Strings
+                    // TOPIC 5.6
                     {
                         category: '5.6 Strings',
                         type: 'mcq',
@@ -247,10 +310,9 @@
                         type: 'mcq',
                         text: 'How many bytes are needed to store the string <code>"Hello"</code>?',
                         options: ['5 bytes', '6 bytes', '4 bytes', '8 bytes'],
-                        correct: 1 // 5 chars + 1 null
+                        correct: 1 
                     },
-
-                    // ADVANCED / TRICKY
+                    // ADVANCED
                     {
                         category: 'Logic Trace',
                         type: 'mcq',
@@ -273,12 +335,39 @@
                     }
                 ],
 
-                // --- FUNCTIONS ---
+                // --- HELPER FUNCTIONS ---
+
+                shuffleArray(array) {
+                    let currentIndex = array.length, randomIndex;
+                    while (currentIndex != 0) {
+                        randomIndex = Math.floor(Math.random() * currentIndex);
+                        currentIndex--;
+                        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                    }
+                    return array;
+                },
 
                 startQuiz() {
+                    // Deep copy and shuffle
+                    this.questions = this.shuffleArray(JSON.parse(JSON.stringify(this.masterQuestions)));
+                    
                     this.state = 'quiz';
                     this.currentIndex = 0;
-                    this.userAnswers = new Array(this.questions.length);
+                    this.userAnswers = new Array(this.questions.length).fill(''); // Pre-fill with empty string
+                    this.textInput = '';
+                    this.timeRunOut = false;
+                    
+                    // Start Timer
+                    this.timeLeft = this.totalTime;
+                    this.timer = setInterval(() => {
+                        if (this.timeLeft > 0) {
+                            this.timeLeft--;
+                        } else {
+                            this.timeRunOut = true;
+                            this.calculateScore(); // Auto submit
+                        }
+                    }, 1000);
+
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 },
 
@@ -286,16 +375,22 @@
                     this.userAnswers[this.currentIndex] = index;
                 },
 
+                hasAnswered(idx) {
+                    return this.userAnswers[idx] !== '' && this.userAnswers[idx] !== undefined && this.userAnswers[idx] !== null;
+                },
+
+                answeredCount() {
+                    return this.userAnswers.filter(a => a !== '' && a !== undefined && a !== null).length;
+                },
+
                 nextQuestion() {
+                    // Move to next question if not last
                     if (this.currentIndex < this.questions.length - 1) {
                         this.currentIndex++;
-                        // If next question is text input, pre-fill if existing answer, else clear
                         if(this.questions[this.currentIndex].type === 'input') {
                             this.textInput = this.userAnswers[this.currentIndex] || '';
                         }
-                    } else {
-                        this.calculateScore();
-                    }
+                    } 
                 },
 
                 prevQuestion() {
@@ -308,19 +403,30 @@
                 },
 
                 calculateScore() {
+                    // Stop timer
+                    clearInterval(this.timer);
+
                     let correctCount = 0;
                     this.questions.forEach((q, i) => {
                         if (q.type === 'mcq') {
                             if (this.userAnswers[i] === q.correct) correctCount++;
                         } else if (q.type === 'input') {
-                            // Check if user input matches any of the valid correct string options
                             const userTxt = (this.userAnswers[i] || '').trim();
                             if (q.correct.includes(userTxt)) correctCount++;
                         }
                     });
                     this.scorePercentage = Math.round((correctCount / this.questions.length) * 100);
                     this.state = 'result';
+                    this.reviewIndex = 0; 
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+
+                // --- FORMATTING & DISPLAY ---
+
+                formatTime(seconds) {
+                    const m = Math.floor(seconds / 60);
+                    const s = seconds % 60;
+                    return `${m}:${s < 10 ? '0' : ''}${s}`;
                 },
 
                 isCorrect(idx) {
@@ -335,14 +441,12 @@
                     const q = this.questions[idx];
                     const ans = this.userAnswers[idx];
                     if (ans === undefined || ans === '') return '(No Answer)';
-                    // Decode &lt; back to < for clean display in result
                     if (q.type === 'mcq') return q.options[ans].replace(/&lt;/g, '<');
                     return ans;
                 },
 
                 formatCorrectAnswer(idx) {
                     const q = this.questions[idx];
-                    // Decode &lt; back to < for clean display in result
                     if (q.type === 'mcq') return q.options[q.correct].replace(/&lt;/g, '<');
                     return q.correct[0];
                 },
@@ -355,6 +459,7 @@
                 },
 
                 resetQuiz() {
+                    clearInterval(this.timer);
                     this.state = 'intro';
                     this.currentIndex = 0;
                     this.userAnswers = [];
