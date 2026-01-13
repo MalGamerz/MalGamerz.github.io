@@ -62,12 +62,12 @@
                         <div class="space-y-3 flex-grow">
                             <template x-for="(option, idx) in questions[currentIndex].options" :key="idx">
                                 <button @click="selectAnswer(idx)" 
-                                        class="w-full text-left p-4 rounded-xl border border-slate-700 hover:bg-slate-800 transition flex items-center group"
+                                        class="w-full text-left p-4 rounded-xl border border-slate-700 hover:bg-slate-800 transition flex items-start group"
                                         :class="{'bg-sky-900/30 border-sky-500 ring-1 ring-sky-500': userAnswers[currentIndex] === idx}">
-                                    <div class="w-8 h-8 rounded-full border-2 border-slate-500 mr-4 flex items-center justify-center text-xs font-bold text-slate-500 group-hover:border-sky-500 group-hover:text-sky-400 transition"
+                                    <div class="w-8 h-8 shrink-0 rounded-full border-2 border-slate-500 mr-4 flex items-center justify-center text-xs font-bold text-slate-500 group-hover:border-sky-500 group-hover:text-sky-400 transition"
                                          :class="{'bg-sky-500 border-sky-500 text-white': userAnswers[currentIndex] === idx}"
                                          x-text="['A','B','C','D'][idx]"></div>
-                                    <span class="text-lg font-mono text-slate-300 group-hover:text-white" x-html="option"></span>
+                                    <span class="text-base md:text-lg font-mono text-slate-300 group-hover:text-white break-words overflow-wrap" style="word-break: break-word; overflow-wrap: break-word;" x-html="option"></span>
                                 </button>
                             </template>
                         </div>
@@ -124,15 +124,15 @@
                                         <span x-show="!isCorrect(idx)" class="text-red-400 text-xl">❌</span>
                                     </div>
                                     <div class="w-full">
-                                        <p class="text-white font-bold text-sm mb-2" x-html="q.text"></p>
+                                        <p class="text-white font-bold text-sm mb-2 break-words" x-html="q.text"></p>
                                         <div class="flex flex-col md:flex-row gap-4 text-xs">
                                             <div class="flex-1">
                                                 <span class="text-slate-500 block mb-1">Your Answer:</span>
-                                                <span class="font-mono text-white bg-slate-800 px-2 py-1 rounded border border-slate-600" x-text="formatAnswer(idx)"></span>
+                                                <span class="font-mono text-white bg-slate-800 px-2 py-1 rounded border border-slate-600 break-words inline-block" style="word-break: break-word; overflow-wrap: break-word;" x-text="formatAnswer(idx)"></span>
                                             </div>
                                             <div class="flex-1" x-show="!isCorrect(idx)">
                                                 <span class="text-green-400 block mb-1">Correct Answer:</span>
-                                                <span class="font-mono text-green-300 bg-green-900/30 px-2 py-1 rounded border border-green-500/30" x-text="formatCorrectAnswer(idx)"></span>
+                                                <span class="font-mono text-green-300 bg-green-900/30 px-2 py-1 rounded border border-green-500/30 break-words inline-block" style="word-break: break-word; overflow-wrap: break-word;" x-text="formatCorrectAnswer(idx)"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -236,7 +236,6 @@
                         type: 'mcq',
                         text: 'Which loop correctly calculates the sum of an array <code>arr</code> of size <code>N</code>?',
                         options: [
-                            // FIXED: Using HTML entity &lt; to ensure browser renders < correctly
                             'for(int i=0; i &lt;= N; i++) sum += arr[i];',
                             'for(int i=1; i &lt; N; i++) sum += arr[i];',
                             'for(int i=0; i &lt; N; i++) sum += arr[i];',
@@ -344,19 +343,13 @@
                     const q = this.questions[idx];
                     const ans = this.userAnswers[idx];
                     if (ans === undefined || ans === '') return '(No Answer)';
-                    if (q.type === 'mcq') {
-                        // Decode entity for clean display
-                        return q.options[ans].replace(/&lt;/g, '<'); 
-                    }
+                    if (q.type === 'mcq') return q.options[ans];
                     return ans;
                 },
 
                 formatCorrectAnswer(idx) {
                     const q = this.questions[idx];
-                    if (q.type === 'mcq') {
-                        // Decode entity for clean display
-                        return q.options[q.correct].replace(/&lt;/g, '<');
-                    }
+                    if (q.type === 'mcq') return q.options[q.correct];
                     return q.correct[0];
                 },
 
