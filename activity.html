@@ -3,55 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSC402 Arrays | Activity</title>
+    <title>CSC402 Arrays | Final Assessment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="bg-[#0f172a] text-slate-300 font-sans antialiased flex flex-col min-h-screen">
 
-    <header id="dynamic-header" class="fixed w-full top-0 z-50 bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-800"></header>
+    <header id="dynamic-header" class="fixed w-full top-0 z-50 bg-[#0f172a] border-b border-slate-800"></header>
 
     <main class="flex-grow pt-32 pb-20 px-4">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto" x-data="quizApp()">
             
-            <div class="glow-card bg-[#1e293b] rounded-2xl p-8 mb-16" x-data="{ answer: '', result: '' }">
-                <h2 class="text-2xl font-bold text-white mb-4">Quick Check</h2>
-                <p class="mb-4 text-lg">If we declare <code class="bg-slate-800 px-2 py-1 rounded text-sky-400 font-mono">int x[5];</code>, what is the index number of the <strong>last</strong> element?</p>
+            <h1 class="text-4xl md:text-5xl font-black text-white mb-4 text-center">Final <span class="text-sky-500">Assessment</span></h1>
+            <p class="text-center text-slate-400 mb-12 text-lg">Test your mastery of C++ Arrays. Complete all sections to see your score.</p>
+
+            <div x-show="submitted" x-transition class="mb-12 bg-gradient-to-r from-sky-900/40 to-indigo-900/40 border border-sky-500/30 rounded-2xl p-8 text-center" x-cloak>
+                <h2 class="text-3xl font-bold text-white mb-2">Quiz Complete!</h2>
+                <div class="text-6xl font-black text-white mb-2" x-text="score + '%'"></div>
+                <p class="text-slate-300" x-text="feedbackMessage"></p>
+                <button @click="resetQuiz()" class="mt-6 px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-bold transition">Retake Quiz</button>
+            </div>
+
+            <div class="space-y-8">
                 
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <input type="text" x-model="answer" placeholder="Type answer (e.g., 1)" 
-                           class="flex-1 bg-[#0f172a] border border-slate-600 rounded-lg px-4 py-3 text-white focus:border-sky-500 focus:outline-none transition">
+                <div class="bg-[#1e293b] rounded-2xl p-8 border border-slate-700 shadow-xl" :class="{'border-green-500/50': submitted && q1 === 'b', 'border-red-500/50': submitted && q1 !== 'b'}">
+                    <div class="flex items-start gap-4">
+                        <span class="bg-slate-700 text-white font-bold px-3 py-1 rounded text-sm">Q1</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-4">Which declaration correctly initializes an array of 3 integers?</h3>
+                            <div class="space-y-3">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-700 cursor-pointer hover:bg-slate-800 transition" :class="{'bg-sky-900/30 border-sky-500': q1 === 'a'}">
+                                    <input type="radio" name="q1" value="a" x-model="q1" class="hidden">
+                                    <span class="w-5 h-5 rounded-full border-2 border-slate-500 flex items-center justify-center">
+                                        <div x-show="q1 === 'a'" class="w-2.5 h-2.5 bg-sky-500 rounded-full"></div>
+                                    </span>
+                                    <code class="text-sm font-mono text-pink-400">int arr[3] = {1, 2};</code>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-700 cursor-pointer hover:bg-slate-800 transition" :class="{'bg-sky-900/30 border-sky-500': q1 === 'b'}">
+                                    <input type="radio" name="q1" value="b" x-model="q1" class="hidden">
+                                    <span class="w-5 h-5 rounded-full border-2 border-slate-500 flex items-center justify-center">
+                                        <div x-show="q1 === 'b'" class="w-2.5 h-2.5 bg-sky-500 rounded-full"></div>
+                                    </span>
+                                    <code class="text-sm font-mono text-green-400">int arr[] = {10, 20, 30};</code>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-700 cursor-pointer hover:bg-slate-800 transition" :class="{'bg-sky-900/30 border-sky-500': q1 === 'c'}">
+                                    <input type="radio" name="q1" value="c" x-model="q1" class="hidden">
+                                    <span class="w-5 h-5 rounded-full border-2 border-slate-500 flex items-center justify-center">
+                                        <div x-show="q1 === 'c'" class="w-2.5 h-2.5 bg-sky-500 rounded-full"></div>
+                                    </span>
+                                    <code class="text-sm font-mono text-slate-300">int arr = [1, 2, 3];</code>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#1e293b] rounded-2xl p-8 border border-slate-700 shadow-xl" :class="{'border-green-500/50': submitted && q2 === 'c', 'border-red-500/50': submitted && q2 !== 'c'}">
+                    <div class="flex items-start gap-4">
+                        <span class="bg-slate-700 text-white font-bold px-3 py-1 rounded text-sm">Q2</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-4">If <code class="text-sky-400">int x[5]</code> starts at memory address <code class="text-yellow-400">100</code>, where is <code class="text-sky-400">x[2]</code> located? (Assume int = 4 bytes)</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button @click="q2 = 'a'" class="p-4 rounded-lg border border-slate-700 font-mono text-center hover:bg-slate-800 transition" :class="{'bg-sky-900/30 border-sky-500 text-white': q2 === 'a'}">102</button>
+                                <button @click="q2 = 'b'" class="p-4 rounded-lg border border-slate-700 font-mono text-center hover:bg-slate-800 transition" :class="{'bg-sky-900/30 border-sky-500 text-white': q2 === 'b'}">104</button>
+                                <button @click="q2 = 'c'" class="p-4 rounded-lg border border-slate-700 font-mono text-center hover:bg-slate-800 transition" :class="{'bg-sky-900/30 border-sky-500 text-white': q2 === 'c'}">108</button>
+                                <button @click="q2 = 'd'" class="p-4 rounded-lg border border-slate-700 font-mono text-center hover:bg-slate-800 transition" :class="{'bg-sky-900/30 border-sky-500 text-white': q2 === 'd'}">112</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#1e293b] rounded-2xl p-8 border border-slate-700 shadow-xl" :class="{'border-green-500/50': submitted && checkCode(), 'border-red-500/50': submitted && !checkCode()}">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-4">
+                            <span class="bg-purple-600 text-white font-bold px-3 py-1 rounded text-sm">CODE</span>
+                            <h3 class="text-xl font-bold text-white">Fix the Loop</h3>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 mb-6">Fill in the blanks to correctly sum all elements in the array.</p>
                     
-                    <button @click="result = (answer === '4') ? 'Correct! The size is 5, so the last index is 4.' : 'Try again. Remember: Index = Size - 1.'" 
-                            class="bg-sky-500 hover:bg-sky-400 text-[#0f172a] font-bold px-8 py-3 rounded-lg transition shadow-lg shadow-sky-500/20">
-                        Check
+                    <div class="bg-[#0b1120] p-6 rounded-xl font-mono text-sm md:text-base leading-loose border border-slate-800">
+                        <div class="text-slate-500">// Calculate sum of array elements</div>
+                        <div><span class="text-purple-400">int</span> arr[] = {2, 4, 6, 8};</div>
+                        <div><span class="text-purple-400">int</span> total = 0;</div>
+                        <br>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-purple-400">for</span> (<span class="text-purple-400">int</span> i = 0; i &lt; 
+                            <input type="text" x-model="code1" class="w-16 bg-slate-800 border-b-2 border-slate-500 text-center focus:outline-none focus:border-sky-500 text-white" placeholder="?">
+                            ; i++) {
+                        </div>
+                        <div class="pl-8 flex items-center gap-2">
+                            total += 
+                            <input type="text" x-model="code2" class="w-24 bg-slate-800 border-b-2 border-slate-500 text-center focus:outline-none focus:border-sky-500 text-white" placeholder="?">
+                            ;
+                        </div>
+                        <div>}</div>
+                    </div>
+                    <div x-show="submitted && !checkCode()" class="mt-4 text-red-400 text-sm">
+                        Hint: Size is 4. Access array using name and index [i].
+                    </div>
+                </div>
+
+                <div class="flex justify-center pt-8">
+                    <button @click="submitQuiz()" 
+                            class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xl px-12 py-4 rounded-full shadow-lg shadow-sky-500/30 transition transform hover:scale-105"
+                            :disabled="submitted"
+                            :class="{'opacity-50 cursor-not-allowed': submitted}">
+                        <span x-text="submitted ? 'Submitted' : 'Submit Answers'"></span>
                     </button>
                 </div>
-                
-                <p class="mt-4 font-bold text-lg" 
-                   :class="answer === '4' ? 'text-green-400' : 'text-red-400'" 
-                   x-text="result"></p>
-            </div>
 
-            <h2 class="text-3xl font-bold text-white mb-6 text-center">Final Assessment</h2>
-            <p class="text-center text-slate-400 mb-8">Complete the Google Form below to finish the module.</p>
-            
-            <div class="w-full h-[600px] bg-white rounded-xl overflow-hidden shadow-2xl border border-slate-700">
-                 <div class="h-full flex flex-col items-center justify-center bg-slate-200 text-slate-500">
-                    <span class="text-4xl mb-4">📝</span>
-                    <p>[ Paste Google Form Embed Code Here ]</p>
-                 </div>
             </div>
-
         </div>
     </main>
 
     <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800 pt-16 pb-8"></footer>
 
     <script src="script.js"></script>
+    <script>
+        function quizApp() {
+            return {
+                q1: null,
+                q2: null,
+                code1: '',
+                code2: '',
+                submitted: false,
+                score: 0,
+                feedbackMessage: '',
 
+                checkCode() {
+                    // Flexible checking for code answers
+                    const c1 = this.code1.trim();
+                    const c2 = this.code2.trim();
+                    return c1 === '4' && (c2 === 'arr[i]' || c2 === 'arr[i];');
+                },
+
+                submitQuiz() {
+                    if (this.submitted) return;
+                    
+                    let points = 0;
+                    
+                    // Q1 Logic: Correct answer is 'b' (Implicit sizing)
+                    if (this.q1 === 'b') points += 33;
+                    
+                    // Q2 Logic: 100 + (2 * 4) = 108. Correct is 'c'
+                    if (this.q2 === 'c') points += 33;
+
+                    // Code Logic
+                    if (this.checkCode()) points += 34;
+
+                    this.score = points;
+                    
+                    // Set feedback based on score
+                    if (points === 100) this.feedbackMessage = "Perfect! You are an Array Master! 🏆";
+                    else if (points > 60) this.feedbackMessage = "Great job! Just a few small tweaks needed.";
+                    else this.feedbackMessage = "Keep practicing! Review the Learn module again.";
+
+                    this.submitted = true;
+                    
+                    // Scroll to top to see score
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+
+                resetQuiz() {
+                    this.q1 = null;
+                    this.q2 = null;
+                    this.code1 = '';
+                    this.code2 = '';
+                    this.submitted = false;
+                    this.score = 0;
+                }
+            }
+        }
+    </script>
 </body>
 </html>
