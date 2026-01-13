@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize the first tab (Intro) when on learn.html
     if (document.getElementById('learn-content-container')) {
-        switchTab('topic-5-1'); // Updated to new ID
-        initLoopSimulator(); // Initialize the loop state, even if tab 5.3 is hidden
+        switchTab('topic-5-1'); 
+        initLoopSimulator(); 
     }
 });
 
@@ -57,28 +57,42 @@ function loadGlobalElements() {
         }
     }
 
-    // Footer HTML Generation
+    // UPDATED FOOTER SECTION
     if(footer) {
+        const year = new Date().getFullYear();
         footer.innerHTML = `
             <div class="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-8 text-sm text-slate-400">
                 <div class="col-span-2">
-                    <h3 class="text-white font-bold text-lg mb-4">CSC402 Multimedia</h3>
-                    <p class="leading-relaxed opacity-80">Designed by Group 4 for CSC536 Instructional Design project.</p>
+                    <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                        <span class="text-sky-500 text-2xl">❖</span> CSC402 Learning Module
+                    </h3>
+                    <p class="leading-relaxed opacity-80 max-w-sm">
+                        An interactive multimedia platform designed for the College of Computing, Informatics and Media. Simplify your C++ journey with visual simulations.
+                    </p>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <h4 class="text-white font-bold mb-4">Sitemap</h4>
                     <ul class="space-y-2">
-                        <li><a href="learn.html" class="hover:text-sky-400 transition">Topic 5 Notes</a></li>
-                        <li><a href="tutorial.html" class="hover:text-sky-400 transition">Watch Videos</a></li>
-                        <li><a href="activity.html" class="hover:text-sky-400 transition">Take Quiz</a></li>
+                        <li><a href="learn.html" class="hover:text-sky-400 transition">Topic 5: Arrays</a></li>
+                        <li><a href="tutorial.html" class="hover:text-sky-400 transition">Virtual Labs</a></li>
+                        <li><a href="activity.html" class="hover:text-sky-400 transition">Student Assessment</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold mb-4">Support</h4>
-                    <p class="opacity-80">group4@student.uitm.edu.my</p>
+                    <h4 class="text-white font-bold mb-4">Help Center</h4>
+                    <ul class="space-y-3 opacity-80">
+                        <li class="flex items-center gap-2">
+                            <span>📧</span> <a href="mailto:support@uitm.edu.my" class="hover:text-white transition">support@uitm.edu.my</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span>🏫</span> UiTM Shah Alam
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <div class="text-center py-6 border-t border-slate-800 text-xs text-slate-600">© 2025-2026 Group 4. All rights reserved.</div>
+            <div class="text-center py-6 border-t border-slate-800 text-xs text-slate-600">
+                © ${year} Universiti Teknologi MARA (UiTM). All Rights Reserved.
+            </div>
         `;
     }
 }
@@ -87,12 +101,10 @@ function loadGlobalElements() {
 // 2. TAB LOGIC 
 // ==========================================
 window.switchTab = function(tabId) {
-    // 1. Hide ALL tab contents
     document.querySelectorAll('.tab-content').forEach(el => {
         el.classList.remove('active');
     });
 
-    // 2. Show TARGET content
     const target = document.getElementById(tabId);
     if(target) {
         target.classList.add('active');
@@ -101,7 +113,6 @@ window.switchTab = function(tabId) {
         return;
     }
 
-    // 3. Update DESKTOP Sidebar
     document.querySelectorAll('.nav-item').forEach(el => {
         el.classList.remove('active', 'bg-slate-800/50', 'text-white', 'border-sky-400');
         el.classList.add('text-slate-400', 'border-transparent');
@@ -113,7 +124,6 @@ window.switchTab = function(tabId) {
         deskBtn.classList.remove('text-slate-400', 'border-transparent');
     }
 
-    // 4. Update MOBILE Sidebar
     document.querySelectorAll('.mob-link').forEach(el => {
         el.classList.remove('active', 'bg-sky-600', 'text-white', 'shadow-lg');
         el.classList.add('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
@@ -124,7 +134,6 @@ window.switchTab = function(tabId) {
         mobBtn.classList.remove('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
         mobBtn.classList.add('active', 'bg-sky-600', 'text-white', 'shadow-lg');
         
-        // Scroll mobile menu to center the active button
         const container = document.getElementById('mobile-nav-container');
         if(container) {
             const scrollLeft = mobBtn.offsetLeft - container.offsetLeft - 20;
@@ -132,7 +141,6 @@ window.switchTab = function(tabId) {
         }
     }
     
-    // 5. Scroll to top of content
     const mainContainer = document.querySelector('main');
     if(mainContainer) mainContainer.scrollTop = 0;
 }
@@ -141,7 +149,7 @@ window.switchTab = function(tabId) {
 // 3. INTERACTIVE VISUALIZERS
 // ==========================================
 
-// --- Loop Simulator State & Functions (New) ---
+// --- Loop Simulator State & Functions ---
 let loopCurrentIndex = 0;
 const LOOP_SIZE = 5;
 let loopArray = [];
@@ -191,7 +199,6 @@ window.simulateLoopStep = function() {
     const inputValue = inputField.value.trim();
 
     if (loopCurrentIndex >= LOOP_SIZE) {
-        // Should be caught by the button swap, but safe guard
         outputConsole.innerHTML = `<span class='text-yellow-400'>// Loop finished! Click Restart.</span>`;
         return;
     }
@@ -201,34 +208,23 @@ window.simulateLoopStep = function() {
         return;
     }
     
-    // 1. Process Input and Update Array
     loopArray[loopCurrentIndex] = inputValue;
-
-    // 2. Update Console
     outputConsole.innerHTML = `<span class='text-green-400'>// Input Processed: scores[${loopCurrentIndex}] = ${inputValue};</span>`;
-
-    // 3. Move to Next Index
     loopCurrentIndex++;
-
-    // 4. Update Visualizer
     renderLoopArray();
 
-    // 5. Check Termination & Update UI
     if (loopCurrentIndex < LOOP_SIZE) {
         outputConsole.innerHTML += `<br><span class='text-slate-300'>// Next: i=${loopCurrentIndex}. Enter value.</span>`;
         inputField.placeholder = `Enter number for index [${loopCurrentIndex}]`;
         inputField.value = '';
     } else {
         outputConsole.innerHTML = `<span class='text-yellow-400'>// Loop finished! Final Array: [${loopArray.join(', ')}]</span>`;
-        
-        // Swap button to Restart
         const btnContainer = document.getElementById('loop-btn-container');
         if (btnContainer) {
             btnContainer.innerHTML = `<button onclick="initLoopSimulator()" id="loop-restart-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold px-8 py-3 rounded-lg transition shrink-0">Restart Loop</button>`;
         }
     }
 }
-
 
 // --- Memory Reveal (5.1) ---
 window.toggleMemory = function(index) {
@@ -251,10 +247,9 @@ window.toggleMemory = function(index) {
 window.simulateAccess = function() {
     const indexInput = document.getElementById('access-input').value;
     const outputBox = document.getElementById('access-output');
-    const visualBoxes = document.querySelectorAll('.visual-box'); // boxes 0-4
-    const ghostBox = document.getElementById('vbox-5'); // the out-of-bounds box
+    const visualBoxes = document.querySelectorAll('.visual-box'); 
+    const ghostBox = document.getElementById('vbox-5'); 
     
-    // --- 1. FULL RESET ---
     visualBoxes.forEach(b => {
         b.classList.remove('ring-4', 'ring-sky-400', 'ring-red-500', 'bg-red-900/50', 'bg-sky-600');
         b.classList.add('bg-slate-800'); 
@@ -271,7 +266,6 @@ window.simulateAccess = function() {
         return;
     }
 
-    // --- 2. VALID ACCESS ---
     if (idx >= 0 && idx < 5) {
         const targetBox = document.getElementById(`vbox-${idx}`);
         targetBox.classList.remove('bg-slate-800');
@@ -279,7 +273,6 @@ window.simulateAccess = function() {
         const value = targetBox.getAttribute('data-value');
         outputBox.innerHTML = `<span class='text-green-400'>Success! Retrieved: <strong>${value}</strong> at Index ${idx}</span>`;
     } 
-    // --- 3. INVALID ACCESS (CRASH) ---
     else {
         outputBox.innerHTML = `<span class='text-red-400 font-bold'>ERROR: Index Out of Bounds! Program Crashed.</span>`;
         visualBoxes.forEach(b => {
@@ -326,7 +319,6 @@ window.visualizeString = function() {
     `;
     html += '</div>';
     
-    // Stats
     const totalBytes = input.length + 1;
     html += `
         <div class="mt-4 text-center text-xs text-slate-400 bg-black/20 p-2 rounded">
