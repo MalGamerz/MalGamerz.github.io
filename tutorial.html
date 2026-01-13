@@ -50,10 +50,10 @@
                             </div>
                             
                             <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Data Value Palette (Click to Select)</p>
-                            <div class="flex gap-3">
+                            <div class="flex flex-wrap gap-3">
                                 <template x-for="val in palette">
                                     <button @click="selectedVal = val" 
-                                            class="w-16 h-12 rounded-lg border-2 font-mono font-bold text-lg transition transform active:scale-95"
+                                            class="min-w-[4rem] px-4 h-12 rounded-lg border-2 font-mono font-bold text-sm md:text-lg transition transform active:scale-95"
                                             :class="selectedVal === val ? 'bg-sky-600 border-sky-400 text-white shadow-[0_0_15px_rgba(14,165,233,0.5)]' : 'bg-slate-800 border-slate-600 hover:border-slate-500'">
                                         <span x-text="val"></span>
                                     </button>
@@ -187,8 +187,6 @@
                     }
                 },
                 check() {
-                    // Correct: [10, 20, 0, 0]
-                    // arr[4] = {10, 20} implies rest are 0.
                     const s = this.memorySlots;
                     if (s[0].val == 10 && s[1].val == 20 && s[2].val == 0 && s[3].val == 0) {
                         this.status = 'success';
@@ -213,9 +211,9 @@
                 workspace: [],
                 toolbox: [
                     { id: 'init_correct', html: '<span class="text-purple-400">int</span> max = arr[0];' },
-                    { id: 'init_wrong', html: '<span class="text-purple-400">int</span> max = 0;' }, // Trap
+                    { id: 'init_wrong', html: '<span class="text-purple-400">int</span> max = 0;' },
                     { id: 'loop_correct', html: '<span class="text-purple-400">for</span>(int i=1; i&lt;5; i++)' },
-                    { id: 'loop_wrong', html: '<span class="text-purple-400">for</span>(int i=0; i&lt;=5; i++)' }, // Trap
+                    { id: 'loop_wrong', html: '<span class="text-purple-400">for</span>(int i=0; i&lt;=5; i++)' },
                     { id: 'if_correct', html: '<span class="text-purple-400">if</span>(arr[i] > max)' },
                     { id: 'assign_correct', html: 'max = arr[i];' }
                 ],
@@ -230,7 +228,6 @@
                 },
                 validate() {
                     const ids = this.workspace.map(b => b.id).join(',');
-                    // Correct sequence: Init -> Loop -> If -> Assign
                     const correctSeq = 'init_correct,loop_correct,if_correct,assign_correct';
                     
                     if (ids === correctSeq) {
@@ -258,57 +255,23 @@
         // LAB 03: HUMAN COMPILER
         function traceLab() {
             return {
-                step: 0, // 0: init arr, 1: init sum, 2: i=0, 3: i=1, 4: i=2, 5: print
+                step: 0,
                 inputI: '',
                 inputSum: '',
                 status: 'idle',
                 message: 'Enter values for i and sum to start.',
                 
-                // arr = {2, 5, 8}
-                states: [
-                    { i: null, sum: 0 },    // Step 0: arr init (i is undef/null really, but lets say null)
-                    { i: null, sum: 0 },    // Step 1: sum=0
-                    { i: 0, sum: 2 },       // Step 2: loop 0 -> sum becomes 2
-                    { i: 1, sum: 7 },       // Step 3: loop 1 -> sum becomes 2+5=7
-                    { i: 2, sum: 15 },      // Step 4: loop 2 -> sum becomes 7+8=15
-                    { i: 3, sum: 15 }       // Step 5: loop ends, i becomes 3, prints 15
-                ],
-
                 checkStep() {
-                    // We simplify validation: 
-                    // To pass Step X, user must input the state AFTER Step X runs.
-                    
-                    // Logic fix: The user needs to predict the variable state at the END of the highlighted line execution
-                    
-                    let targetI, targetSum;
-                    
-                    if (this.step === 0) { targetI = ''; targetSum = ''; } // Initial dummy check not needed, just press next
-                    else if (this.step === 1) { targetI = ''; targetSum = 0; }
-                    else if (this.step === 2) { targetI = 0; targetSum = 2; }
-                    else if (this.step === 3) { targetI = 1; targetSum = 7; }
-                    else if (this.step === 4) { targetI = 2; targetSum = 15; }
-                    
-                    // For UI simplicity, let's just use strict simple validation
-                    // Sequence:
-                    // 1. Highlight 'int sum = 0'. User inputs i= - , sum=0. Click Next.
-                    // 2. Highlight Loop 1. User inputs i=0, sum=2. Click Next.
-                    // 3. Highlight Loop 2. User inputs i=1, sum=7. Click Next.
-                    // 4. Highlight Loop 3. User inputs i=2, sum=15. Click Next.
-                    
-                    // Correct Logic Map:
-                    // Current Step 0 (Start) -> Click Next -> Validates if inputs match Step 0 state? No, inputs match result of Step 0.
-                    
                     const iVal = this.inputI === '' ? null : parseInt(this.inputI);
                     const sVal = this.inputSum === '' ? null : parseInt(this.inputSum);
 
-                    // Map steps to expected values
                     const expectations = [
-                        { i: null, s: null }, // 0
-                        { i: null, s: 0 },    // 1
-                        { i: 0, s: 2 },       // 2
-                        { i: 1, s: 7 },       // 3
-                        { i: 2, s: 15 },      // 4
-                        { i: 3, s: 15 }       // 5 (End)
+                        { i: null, s: null },
+                        { i: null, s: 0 },
+                        { i: 0, s: 2 },
+                        { i: 1, s: 7 },
+                        { i: 2, s: 15 },
+                        { i: 3, s: 15 }
                     ];
 
                     if (this.step >= 5) {
@@ -317,8 +280,6 @@
                     }
 
                     const exp = expectations[this.step + 1];
-                    
-                    // Allow empty input for null
                     let matchI = (exp.i === null && (this.inputI === '' || this.inputI === null)) || iVal === exp.i;
                     let matchS = (exp.s === null && (this.inputSum === '' || this.inputSum === null)) || sVal === exp.s;
 
@@ -326,7 +287,7 @@
                         this.step++;
                         this.status = 'success';
                         this.message = "Trace Correct.";
-                        this.inputI = ''; // Clear for next step challenge
+                        this.inputI = '';
                         this.inputSum = '';
                         if(this.step === 5) this.message = "Execution Finished! Output: 15";
                     } else {
