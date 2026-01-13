@@ -12,7 +12,6 @@
         code, .font-mono { font-family: 'JetBrains Mono', monospace; }
         [x-cloak] { display: none !important; }
         
-        /* Smooth fade animation */
         .fade-enter { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -157,13 +156,12 @@
     <script>
         function quizEngine() {
             return {
-                state: 'intro', // intro, quiz, result
+                state: 'intro',
                 currentIndex: 0,
                 textInput: '',
-                userAnswers: [], // Stores user responses
+                userAnswers: [],
                 scorePercentage: 0,
 
-                // --- THE QUESTION BANK ---
                 questions: [
                     // TOPIC 5.1: Intro & Memory
                     {
@@ -178,7 +176,7 @@
                         type: 'mcq',
                         text: 'If an integer (4 bytes) at index [0] is at address 1000, what is the address of index [3]?',
                         options: ['1003', '1004', '1012', '1008'],
-                        correct: 2 // 1000 + (3 * 4) = 1012
+                        correct: 2 
                     },
                     {
                         category: '5.1 Logic',
@@ -194,7 +192,7 @@
                         type: 'mcq',
                         text: 'Which of the following array declarations is <strong>INVALID</strong>?',
                         options: ['int arr[5];', 'int arr[] = {1, 2, 3};', 'int arr[3] = {1, 2, 3};', 'int arr[3] = {1, 2, 3, 4};'],
-                        correct: 3 // Too many initializers
+                        correct: 3 
                     },
                     {
                         category: '5.2 Syntax',
@@ -237,12 +235,12 @@
                         category: '5.3 Logic',
                         type: 'mcq',
                         text: 'Which loop correctly calculates the sum of an array <code>arr</code> of size <code>N</code>?',
-                        // NOTE: using &lt; instead of < to prevent HTML rendering issues
                         options: [
-                            'for(int i=0; i&lt;=N; i++) sum += arr[i];', // goes out of bounds
-                            'for(int i=1; i&lt;N; i++) sum += arr[i];',  // skips index 0
-                            'for(int i=0; i&lt;N; i++) sum += arr[i];',  // Correct
-                            'for(int i=0; i&lt;N; i++) sum = arr[i];'    // overwrites sum
+                            // FIXED: Added spaces around operators (e.g. " < ") so browser doesn't hide them
+                            'for(int i=0; i <= N; i++) sum += arr[i];',
+                            'for(int i=1; i < N; i++) sum += arr[i];',
+                            'for(int i=0; i < N; i++) sum += arr[i];',
+                            'for(int i=0; i < N; i++) sum = arr[i];'
                         ],
                         correct: 2
                     },
@@ -260,10 +258,10 @@
                         type: 'mcq',
                         text: 'How many bytes are needed to store the string <code>"Hello"</code>?',
                         options: ['5 bytes', '6 bytes', '4 bytes', '8 bytes'],
-                        correct: 1 // 5 chars + 1 null terminator
+                        correct: 1 
                     },
 
-                    // ADVANCED / TRICKY
+                    // ADVANCED
                     {
                         category: 'Logic Trace',
                         type: 'mcq',
@@ -286,8 +284,6 @@
                     }
                 ],
 
-                // --- FUNCTIONS ---
-
                 startQuiz() {
                     this.state = 'quiz';
                     this.currentIndex = 0;
@@ -300,10 +296,8 @@
                 },
 
                 nextQuestion() {
-                    // Logic to move to next or finish
                     if (this.currentIndex < this.questions.length - 1) {
                         this.currentIndex++;
-                        // If next is input, sync the text field with stored answer (if any)
                         if(this.questions[this.currentIndex].type === 'input') {
                             this.textInput = this.userAnswers[this.currentIndex] || '';
                         }
@@ -324,13 +318,10 @@
                 calculateScore() {
                     let correctCount = 0;
                     this.questions.forEach((q, i) => {
-                        // Check MCQ
                         if (q.type === 'mcq') {
                             if (this.userAnswers[i] === q.correct) correctCount++;
                         } 
-                        // Check Input
                         else if (q.type === 'input') {
-                            // Normalize answer: trim whitespace
                             const userTxt = (this.userAnswers[i] || '').trim();
                             if (q.correct.includes(userTxt)) correctCount++;
                         }
@@ -344,33 +335,23 @@
                 isCorrect(idx) {
                     const q = this.questions[idx];
                     const ans = this.userAnswers[idx];
-                    
                     if (q.type === 'mcq') return ans === q.correct;
                     if (q.type === 'input') return q.correct.includes((ans || '').trim());
                     return false;
                 },
 
-                // Helpers for Result Screen
                 formatAnswer(idx) {
                     const q = this.questions[idx];
                     const ans = this.userAnswers[idx];
-                    
                     if (ans === undefined || ans === '') return '(No Answer)';
-                    if (q.type === 'mcq') {
-                        // We need to decode html entities for display if we want, 
-                        // but sticking to raw string is safer for simplicity here.
-                        // However, since options contain &lt;, let's use a temp element to decode if needed,
-                        // or just rely on x-text/x-html. 
-                        // Here we return the raw string from options array.
-                        return q.options[ans].replace(/&lt;/g, '<'); 
-                    }
+                    if (q.type === 'mcq') return q.options[ans];
                     return ans;
                 },
 
                 formatCorrectAnswer(idx) {
                     const q = this.questions[idx];
-                    if (q.type === 'mcq') return q.options[q.correct].replace(/&lt;/g, '<');
-                    return q.correct[0]; // Return first valid text option
+                    if (q.type === 'mcq') return q.options[q.correct];
+                    return q.correct[0];
                 },
 
                 getFeedback() {
