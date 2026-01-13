@@ -12,7 +12,6 @@
         [x-cloak] { display: none !important; }
         .fade-enter { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* Pulse animation for low time */
         .animate-pulse-red { animation: pulseRed 1s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes pulseRed { 0%, 100% { opacity: 1; color: #ef4444; } 50% { opacity: .5; } }
     </style>
@@ -31,7 +30,7 @@
                 <h1 class="text-4xl md:text-6xl font-black text-white mb-6">Array <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">Mastery</span> Quiz</h1>
                 <p class="text-xl text-slate-400 mb-8 max-w-xl mx-auto leading-relaxed">
                     15 Questions. Randomized.<br>
-                    <span class="text-white font-bold">⏱️ Time Limit: 10 Minutes.</span>
+                    <span class="text-white font-bold">⏱️ Time Limit: 5 Minutes.</span>
                 </p>
                 <div class="flex justify-center gap-4">
                     <button @click="startQuiz()" class="bg-sky-500 hover:bg-sky-400 text-white text-xl font-bold px-12 py-4 rounded-full shadow-lg shadow-sky-500/20 transition transform hover:scale-105">
@@ -44,7 +43,7 @@
 
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
                     
-                    <div class="flex-grow md:max-w-md">
+                    <div class="flex-grow md:max-w-md order-2 md:order-1">
                         <div class="flex justify-between text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
                             <span>Progress</span>
                             <span x-text="Math.round((answeredCount() / questions.length) * 100) + '%'"></span>
@@ -54,10 +53,10 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 bg-slate-800/80 rounded-lg px-4 py-2 border border-slate-700"
+                    <div class="order-1 md:order-2 flex items-center justify-center gap-3 bg-slate-800/80 rounded-lg px-6 py-3 border border-slate-700 w-full md:w-auto shadow-md"
                          :class="{'border-red-500/50 bg-red-900/20': timeLeft <= 60}">
                         <span class="text-xl">⏱️</span>
-                        <span class="text-2xl font-mono font-bold text-white" 
+                        <span class="text-2xl font-mono font-bold text-white tracking-widest" 
                               :class="{'animate-pulse-red': timeLeft <= 60}"
                               x-text="formatTime(timeLeft)"></span>
                     </div>
@@ -177,17 +176,19 @@
                             </div>
                         </div>
 
-                        <div class="flex justify-between items-center mt-auto pt-6 border-t border-slate-800">
+                        <div class="flex flex-col md:flex-row justify-between items-center mt-auto pt-6 border-t border-slate-800 gap-4">
                             <button @click="reviewIndex > 0 ? reviewIndex-- : null" 
-                                    class="text-slate-400 hover:text-white font-bold px-4 py-2 rounded-lg transition disabled:opacity-30"
+                                    class="w-full md:w-auto text-slate-400 hover:text-white font-bold px-4 py-2 rounded-lg transition disabled:opacity-30 order-2 md:order-1"
                                     :disabled="reviewIndex === 0">
                                 ← Previous
                             </button>
                             
-                            <button @click="resetQuiz()" class="text-xs text-slate-500 hover:text-slate-300">Restart Quiz</button>
+                            <button @click="resetQuiz()" class="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 py-2 rounded-lg transition shadow-md order-1 md:order-2 border border-slate-600">
+                                ↺ Restart Quiz
+                            </button>
 
                             <button @click="reviewIndex < questions.length - 1 ? reviewIndex++ : null" 
-                                    class="bg-white text-slate-900 hover:bg-sky-50 font-bold px-6 py-2 rounded-full shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:scale-100"
+                                    class="w-full md:w-auto bg-white text-slate-900 hover:bg-sky-50 font-bold px-6 py-2 rounded-full shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:scale-100 order-3"
                                     :disabled="reviewIndex === questions.length - 1">
                                 Next →
                             </button>
@@ -213,10 +214,10 @@
                 questions: [], 
                 scorePercentage: 0,
                 
-                // TIMER VARIABLES
+                // TIMER VARIABLES: Reduced to 300 seconds (5 Minutes)
                 timer: null,
-                totalTime: 600, // 10 minutes in seconds
-                timeLeft: 600,
+                totalTime: 300, 
+                timeLeft: 300,
                 timeRunOut: false,
 
                 // --- MASTER QUESTION BANK ---
@@ -353,7 +354,7 @@
                     
                     this.state = 'quiz';
                     this.currentIndex = 0;
-                    this.userAnswers = new Array(this.questions.length).fill(''); // Pre-fill with empty string
+                    this.userAnswers = new Array(this.questions.length).fill('');
                     this.textInput = '';
                     this.timeRunOut = false;
                     
@@ -384,7 +385,6 @@
                 },
 
                 nextQuestion() {
-                    // Move to next question if not last
                     if (this.currentIndex < this.questions.length - 1) {
                         this.currentIndex++;
                         if(this.questions[this.currentIndex].type === 'input') {
@@ -403,7 +403,6 @@
                 },
 
                 calculateScore() {
-                    // Stop timer
                     clearInterval(this.timer);
 
                     let correctCount = 0;
@@ -420,8 +419,6 @@
                     this.reviewIndex = 0; 
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 },
-
-                // --- FORMATTING & DISPLAY ---
 
                 formatTime(seconds) {
                     const m = Math.floor(seconds / 60);
