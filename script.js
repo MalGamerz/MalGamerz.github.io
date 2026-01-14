@@ -1,15 +1,29 @@
 // ==========================================
 // 1. GLOBAL CONFIGURATION & NAVIGATION
 // ==========================================
+
+// Global State for Loop Simulator
+const loopData = [10, 25, 40, 15, 30];
+let loopState = {
+    step: 0, // 0: Check, 1: Add, 2: Increment
+    i: 0,
+    total: 0,
+    finished: false
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     loadGlobalElements();
     initTypewriter();
     initParallax();
     
     // Initialize specific simulators when on learn.html
-    if (document.getElementById('learn-content-container')) {
-        switchTab('topic-5-1'); 
-        initLoopVisualizer(); // Starts the NEW Loop Simulator
+    const learnContainer = document.getElementById('learn-content-container');
+    if (learnContainer) {
+        // We use a slight timeout to ensure all DOM elements are painted
+        setTimeout(() => {
+            switchTab('topic-5-1'); 
+            initLoopVisualizer(); // Manually start the visualizer
+        }, 50);
     }
 });
 
@@ -57,7 +71,7 @@ function loadGlobalElements() {
         }
     }
 
-    // UPDATED FOOTER SECTION
+    // Footer HTML Generation
     if(footer) {
         const year = new Date().getFullYear();
         footer.innerHTML = `
@@ -84,9 +98,6 @@ function loadGlobalElements() {
                         <li class="flex items-center gap-2">
                             <span>📧</span> <a href="mailto:support@uitm.edu.my" class="hover:text-white transition">support@uitm.edu.my</a>
                         </li>
-                        <li class="flex items-center gap-2">
-                            <span>🏫</span> UiTM Jasin
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -100,7 +111,7 @@ function loadGlobalElements() {
 // ==========================================
 // 2. TAB LOGIC 
 // ==========================================
-window.switchTab = function(tabId) {
+function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => {
         el.classList.remove('active');
     });
@@ -108,9 +119,6 @@ window.switchTab = function(tabId) {
     const target = document.getElementById(tabId);
     if(target) {
         target.classList.add('active');
-    } else {
-        console.error(`Tab ID '${tabId}' not found!`);
-        return;
     }
 
     document.querySelectorAll('.nav-item').forEach(el => {
@@ -124,6 +132,7 @@ window.switchTab = function(tabId) {
         deskBtn.classList.remove('text-slate-400', 'border-transparent');
     }
 
+    // Mobile Nav Updates
     document.querySelectorAll('.mob-link').forEach(el => {
         el.classList.remove('active', 'bg-sky-600', 'text-white', 'shadow-lg');
         el.classList.add('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
@@ -149,27 +158,21 @@ window.switchTab = function(tabId) {
 // 3. INTERACTIVE VISUALIZERS
 // ==========================================
 
-/* --- NEW: TRUE LOOP SIMULATOR LOGIC (Topic 5.3) --- */
-const loopData = [10, 25, 40, 15, 30];
-let loopState = {
-    step: 0, // 0: Check, 1: Add, 2: Increment
-    i: 0,
-    total: 0,
-    finished: false
-};
-
-window.initLoopVisualizer = function() {
+/* --- TRUE LOOP SIMULATOR LOGIC (Topic 5.3) --- */
+function initLoopVisualizer() {
     const container = document.getElementById('visual-array-container');
-    if (!container) return; // Guard clause for other pages
+    if (!container) return; 
+    
     container.innerHTML = '';
     
     loopData.forEach((val, idx) => {
         const box = document.createElement('div');
         box.id = `loop-box-${idx}`;
-        box.className = 'w-12 h-14 bg-slate-800 border border-slate-600 rounded flex flex-col items-center justify-center text-sm font-bold transition-all duration-300';
+        // Changed bg-slate-800 to bg-slate-700 for better visibility
+        box.className = 'w-12 h-14 bg-slate-700 border border-slate-500 rounded flex flex-col items-center justify-center text-sm font-bold transition-all duration-300 shadow-md';
         box.innerHTML = `
             <span class="text-white">${val}</span>
-            <span class="text-[9px] text-slate-500 mt-1">${idx}</span>
+            <span class="text-[9px] text-slate-400 mt-1">${idx}</span>
         `;
         container.appendChild(box);
     });
@@ -177,7 +180,7 @@ window.initLoopVisualizer = function() {
     updateLoopUI();
 }
 
-window.resetLoop = function() {
+function resetLoop() {
     loopState = { step: 0, i: 0, total: 0, finished: false };
     initLoopVisualizer();
     const status = document.getElementById('loop-status');
@@ -188,15 +191,15 @@ window.resetLoop = function() {
         btn.disabled = false;
         btn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
-    highlightLine(0); // Clear highlights
+    highlightLine(0);
 }
 
-window.stepLoop = function() {
+function stepLoop() {
     if (loopState.finished) return;
 
     if (loopState.i >= loopData.length) {
         document.getElementById('loop-status').innerHTML = "<span class='text-green-400 font-bold'>Loop Finished!</span>";
-        highlightLine(2); // Final check fails
+        highlightLine(2); 
         const btn = document.getElementById('step-btn');
         if(btn) {
             btn.disabled = true;
@@ -218,9 +221,15 @@ window.stepLoop = function() {
         highlightLine(3);
         
         // Highlight active box
-        document.querySelectorAll('[id^="loop-box-"]').forEach(b => b.classList.remove('bg-sky-600', 'scale-110', 'border-sky-400'));
+        document.querySelectorAll('[id^="loop-box-"]').forEach(b => {
+            b.classList.remove('bg-sky-600', 'scale-110', 'border-sky-400');
+            b.classList.add('bg-slate-700');
+        });
         const activeBox = document.getElementById(`loop-box-${loopState.i}`);
-        if(activeBox) activeBox.classList.add('bg-sky-600', 'scale-110', 'border-sky-400');
+        if(activeBox) {
+            activeBox.classList.remove('bg-slate-700');
+            activeBox.classList.add('bg-sky-600', 'scale-110', 'border-sky-400');
+        }
 
         const val = loopData[loopState.i];
         loopState.total += val;
@@ -230,10 +239,10 @@ window.stepLoop = function() {
 
     } else if (loopState.step === 2) {
         // Step 2: Increment
-        highlightLine(2); // Visualized at 'for' line
+        highlightLine(2); 
         loopState.i++;
         document.getElementById('loop-status').innerHTML = `Incrementing i. New i: <span class="text-sky-400 font-bold">${loopState.i}</span>`;
-        loopState.step = 0; // Loop back
+        loopState.step = 0; 
     }
 
     updateLoopUI();
@@ -269,7 +278,7 @@ function highlightLine(lineNum) {
 }
 
 // --- Memory Reveal (5.1) ---
-window.toggleMemory = function(index) {
+function toggleMemory(index) {
     const box = document.getElementById(`mem-box-${index}`);
     const val = document.getElementById(`mem-val-${index}`);
     if(box && val) {
@@ -286,7 +295,7 @@ window.toggleMemory = function(index) {
 }
 
 // -- String Visualizer (5.3) --
-window.visualizeString = function() {
+function visualizeString() {
     const input = document.getElementById('char-input').value;
     const output = document.getElementById('char-output');
     
@@ -371,3 +380,10 @@ function initParallax() {
         });
     });
 }
+
+// Expose functions to window (optional but good for HTML onclick handlers)
+window.switchTab = switchTab;
+window.resetLoop = resetLoop;
+window.stepLoop = stepLoop;
+window.toggleMemory = toggleMemory;
+window.visualizeString = visualizeString;
