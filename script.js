@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initTypewriter();
     initParallax();
     
-    // Initialize the first tab (Intro) when on learn.html
+    // Initialize specific simulators when on learn.html
     if (document.getElementById('learn-content-container')) {
         switchTab('topic-5-1'); 
-        initLoopSimulator(); 
+        initLoopVisualizer(); // Starts the NEW Loop Simulator
     }
 });
 
@@ -149,80 +149,122 @@ window.switchTab = function(tabId) {
 // 3. INTERACTIVE VISUALIZERS
 // ==========================================
 
-// --- Loop Simulator State & Functions ---
-let loopCurrentIndex = 0;
-const LOOP_SIZE = 5;
-let loopArray = [];
+/* --- NEW: TRUE LOOP SIMULATOR LOGIC (Topic 5.3) --- */
+const loopData = [10, 25, 40, 15, 30];
+let loopState = {
+    step: 0, // 0: Check, 1: Add, 2: Increment
+    i: 0,
+    total: 0,
+    finished: false
+};
 
-window.setupInitialLoopButton = function() {
-    const btnContainer = document.getElementById('loop-btn-container');
-    if (btnContainer) {
-        btnContainer.innerHTML = `<button onclick="simulateLoopStep()" id="loop-next-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-3 rounded-lg transition shrink-0">Run Step</button>`;
-    }
-}
-
-window.renderLoopArray = function() {
-    const container = document.getElementById('loop-array-visualizer');
-    let html = '';
-    for (let i = 0; i < LOOP_SIZE; i++) {
-        const isActive = (i === loopCurrentIndex && loopCurrentIndex < LOOP_SIZE) ? 'bg-indigo-600 ring-4 ring-indigo-400 shadow-xl' : 'bg-slate-800';
-        const valueClass = loopArray[i] === '?' ? 'text-slate-500' : 'text-white';
-        html += `
-            <div id="loop-box-${i}" class="w-14 h-16 rounded flex flex-col items-center justify-center font-bold border-2 border-slate-600 transition-all duration-300 ${isActive}">
-                <span class="text-lg ${valueClass}">${loopArray[i]}</span>
-                <span class="text-xs text-slate-400 mt-1">[${i}]</span>
-            </div>
-        `;
-    }
-    container.innerHTML = html;
-}
-
-window.initLoopSimulator = function() {
-    loopCurrentIndex = 0;
-    loopArray = new Array(LOOP_SIZE).fill('?');
-    setupInitialLoopButton(); 
-    renderLoopArray();
-    const consoleOutput = document.getElementById('loop-console-output');
-    if (consoleOutput) {
-        consoleOutput.innerHTML = `<span class='text-slate-500'>// Console: Click 'Run Step' to begin (i=0)...</span>`;
-    }
-    const inputField = document.getElementById('loop-input-value');
-    if (inputField) {
-        inputField.value = '';
-        inputField.placeholder = `Enter number for index [0]`;
-    }
-}
-
-window.simulateLoopStep = function() {
-    const inputField = document.getElementById('loop-input-value');
-    const outputConsole = document.getElementById('loop-console-output');
-    const inputValue = inputField.value.trim();
-
-    if (loopCurrentIndex >= LOOP_SIZE) {
-        outputConsole.innerHTML = `<span class='text-yellow-400'>// Loop finished! Click Restart.</span>`;
-        return;
-    }
-
-    if (inputValue === "" || isNaN(parseInt(inputValue))) {
-        outputConsole.innerHTML = `<span class='text-red-400'>// ERROR: Please enter a valid number for index [${loopCurrentIndex}]</span>`;
-        return;
-    }
+window.initLoopVisualizer = function() {
+    const container = document.getElementById('visual-array-container');
+    if (!container) return; // Guard clause for other pages
+    container.innerHTML = '';
     
-    loopArray[loopCurrentIndex] = inputValue;
-    outputConsole.innerHTML = `<span class='text-green-400'>// Input Processed: scores[${loopCurrentIndex}] = ${inputValue};</span>`;
-    loopCurrentIndex++;
-    renderLoopArray();
+    loopData.forEach((val, idx) => {
+        const box = document.createElement('div');
+        box.id = `loop-box-${idx}`;
+        box.className = 'w-12 h-14 bg-slate-800 border border-slate-600 rounded flex flex-col items-center justify-center text-sm font-bold transition-all duration-300';
+        box.innerHTML = `
+            <span class="text-white">${val}</span>
+            <span class="text-[9px] text-slate-500 mt-1">${idx}</span>
+        `;
+        container.appendChild(box);
+    });
+    
+    updateLoopUI();
+}
 
-    if (loopCurrentIndex < LOOP_SIZE) {
-        outputConsole.innerHTML += `<br><span class='text-slate-300'>// Next: i=${loopCurrentIndex}. Enter value.</span>`;
-        inputField.placeholder = `Enter number for index [${loopCurrentIndex}]`;
-        inputField.value = '';
-    } else {
-        outputConsole.innerHTML = `<span class='text-yellow-400'>// Loop finished! Final Array: [${loopArray.join(', ')}]</span>`;
-        const btnContainer = document.getElementById('loop-btn-container');
-        if (btnContainer) {
-            btnContainer.innerHTML = `<button onclick="initLoopSimulator()" id="loop-restart-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold px-8 py-3 rounded-lg transition shrink-0">Restart Loop</button>`;
+window.resetLoop = function() {
+    loopState = { step: 0, i: 0, total: 0, finished: false };
+    initLoopVisualizer();
+    const status = document.getElementById('loop-status');
+    const btn = document.getElementById('step-btn');
+    
+    if(status) status.innerHTML = "Reset. Ready to start.";
+    if(btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+    highlightLine(0); // Clear highlights
+}
+
+window.stepLoop = function() {
+    if (loopState.finished) return;
+
+    if (loopState.i >= loopData.length) {
+        document.getElementById('loop-status').innerHTML = "<span class='text-green-400 font-bold'>Loop Finished!</span>";
+        highlightLine(2); // Final check fails
+        const btn = document.getElementById('step-btn');
+        if(btn) {
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
         }
+        loopState.finished = true;
+        return;
+    }
+
+    // STATE MACHINE
+    if (loopState.step === 0) {
+        // Step 0: Check Condition
+        highlightLine(2);
+        document.getElementById('loop-status').innerHTML = `Checking: Is i (${loopState.i}) < 5? <span class="text-green-400 font-bold">TRUE</span>`;
+        loopState.step = 1;
+
+    } else if (loopState.step === 1) {
+        // Step 1: Execute Body
+        highlightLine(3);
+        
+        // Highlight active box
+        document.querySelectorAll('[id^="loop-box-"]').forEach(b => b.classList.remove('bg-sky-600', 'scale-110', 'border-sky-400'));
+        const activeBox = document.getElementById(`loop-box-${loopState.i}`);
+        if(activeBox) activeBox.classList.add('bg-sky-600', 'scale-110', 'border-sky-400');
+
+        const val = loopData[loopState.i];
+        loopState.total += val;
+        
+        document.getElementById('loop-status').innerHTML = `Adding ${val} to Total. New Total: <span class="text-white font-bold">${loopState.total}</span>`;
+        loopState.step = 2;
+
+    } else if (loopState.step === 2) {
+        // Step 2: Increment
+        highlightLine(2); // Visualized at 'for' line
+        loopState.i++;
+        document.getElementById('loop-status').innerHTML = `Incrementing i. New i: <span class="text-sky-400 font-bold">${loopState.i}</span>`;
+        loopState.step = 0; // Loop back
+    }
+
+    updateLoopUI();
+}
+
+function updateLoopUI() {
+    const iEl = document.getElementById('var-i');
+    const totalEl = document.getElementById('var-total');
+    const arrEl = document.getElementById('var-arr');
+
+    if(iEl) iEl.innerText = loopState.i;
+    if(totalEl) totalEl.innerText = loopState.total;
+    
+    if(arrEl) {
+        if (loopState.i < loopData.length) {
+            arrEl.innerText = loopData[loopState.i];
+        } else {
+            arrEl.innerText = "-";
+        }
+    }
+}
+
+function highlightLine(lineNum) {
+    [1, 2, 3, 4].forEach(n => {
+        const el = document.getElementById(`code-line-${n}`);
+        if(el) el.className = "p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent";
+    });
+
+    if (lineNum > 0) {
+        const el = document.getElementById(`code-line-${lineNum}`);
+        if(el) el.className = "p-2 rounded transition-colors text-white bg-slate-800 border-l-2 border-sky-500 shadow-sm";
     }
 }
 
@@ -239,50 +281,6 @@ window.toggleMemory = function(index) {
             val.classList.add('opacity-0', 'scale-50');
             val.classList.remove('opacity-100', 'scale-100');
             box.classList.remove('border-sky-400', 'bg-slate-700');
-        }
-    }
-}
-
-// --- Access Simulator (5.3) ---
-window.simulateAccess = function() {
-    const indexInput = document.getElementById('access-input').value;
-    const outputBox = document.getElementById('access-output');
-    const visualBoxes = document.querySelectorAll('.visual-box'); 
-    const ghostBox = document.getElementById('vbox-5'); 
-    
-    visualBoxes.forEach(b => {
-        b.classList.remove('ring-4', 'ring-sky-400', 'ring-red-500', 'bg-red-900/50', 'bg-sky-600');
-        b.classList.add('bg-slate-800'); 
-    });
-
-    if (ghostBox) {
-        ghostBox.classList.remove('opacity-100', 'text-red-500', 'border-red-500', 'bg-red-900/20');
-        ghostBox.classList.add('opacity-50', 'text-slate-700', 'border-slate-700');
-    }
-
-    const idx = parseInt(indexInput);
-    if (isNaN(idx)) {
-        outputBox.innerHTML = "<span class='text-slate-400'>Please enter a valid number.</span>";
-        return;
-    }
-
-    if (idx >= 0 && idx < 5) {
-        const targetBox = document.getElementById(`vbox-${idx}`);
-        targetBox.classList.remove('bg-slate-800');
-        targetBox.classList.add('bg-sky-600', 'ring-4', 'ring-sky-400');
-        const value = targetBox.getAttribute('data-value');
-        outputBox.innerHTML = `<span class='text-green-400'>Success! Retrieved: <strong>${value}</strong> at Index ${idx}</span>`;
-    } 
-    else {
-        outputBox.innerHTML = `<span class='text-red-400 font-bold'>ERROR: Index Out of Bounds! Program Crashed.</span>`;
-        visualBoxes.forEach(b => {
-             b.classList.remove('bg-slate-800');
-             b.classList.add('bg-red-900/50');
-        });
-        
-        if(idx >= 5 && ghostBox) {
-            ghostBox.classList.remove('opacity-50', 'text-slate-700', 'border-slate-700');
-            ghostBox.classList.add('opacity-100', 'text-red-500', 'border-red-500', 'bg-red-900/20');
         }
     }
 }
@@ -322,7 +320,7 @@ window.visualizeString = function() {
     const totalBytes = input.length + 1;
     html += `
         <div class="mt-4 text-center text-xs text-slate-400 bg-black/20 p-2 rounded">
-            Size in RAM: <span class="text-white">${input.length} chars</span> + <span class="text-orange-400">1 null</span> = <span class="text-sky-400 font-bold">${totalBytes} bytes}</span>
+            Size in RAM: <span class="text-white">${input.length} chars</span> + <span class="text-orange-400">1 null</span> = <span class="text-sky-400 font-bold">${totalBytes} bytes</span>
         </div>
     `;
 
@@ -373,4 +371,3 @@ function initParallax() {
         });
     });
 }
-
