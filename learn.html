@@ -83,7 +83,6 @@
                 </figure>
 
                 <div class="prose-text text-lg space-y-8">
-                    
                     <div>
                         <h2 class="text-2xl font-bold text-white mb-4">What is an Array, actually?</h2>
                         <p class="text-slate-300">
@@ -143,7 +142,6 @@
                     </div>
 
                     <div class="grid md:grid-cols-2 gap-8 my-12 items-stretch">
-                        
                         <div class="flex flex-col justify-center">
                             <h2 class="text-2xl font-bold text-white mb-4">Why the +4 Jump?</h2>
                             <p class="text-slate-300 text-sm mb-6 leading-relaxed">
@@ -313,26 +311,70 @@
                 </div>
 
                 <p class="prose-text mb-8">
-                    An array is useless if you cannot manipulate it. Processing involves traversing the array (usually with loops) to perform operations like summation, searching, or sorting.
+                    An array is useless if you cannot manipulate it. Processing involves traversing the array (usually with loops) to perform operations like summation.
                 </p>
 
-                <div class="bg-[#1e293b] rounded-2xl border border-slate-700 p-6 md:p-8 shadow-xl mb-12">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-white font-bold text-2xl">Loop Visualizer</h3>
-                        <span class="text-xs text-slate-500 font-mono">i++</span>
-                    </div>
-                    
-                    <div id="loop-array-visualizer" class="flex justify-center gap-3 mb-8"></div>
-                    <div class="flex gap-4">
-                        <input type="number" id="loop-input-value" placeholder="Enter value..." class="w-full bg-[#0f172a] border border-slate-600 rounded-lg px-4 py-3 text-white focus:border-sky-500 outline-none transition">
-                        <div id="loop-btn-container">
-                            <button onclick="simulateLoopStep()" id="loop-next-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-3 rounded-lg transition shrink-0 shadow-lg shadow-indigo-500/20">Run Step</button>
+                <div class="bg-[#1e293b] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl mb-12">
+                    <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                        <h3 class="text-white font-bold text-lg">For-Loop Logic Simulator</h3>
+                        <div class="flex gap-2">
+                            <button onclick="resetLoop()" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded transition">Reset</button>
                         </div>
                     </div>
-                    <div id="loop-console-output" class="mt-4 text-xs font-mono p-4 bg-black/50 rounded-lg border border-slate-800 text-slate-400">
-                        // Console: Waiting to start...
+
+                    <div class="grid md:grid-cols-2">
+                        <div class="p-6 border-r border-slate-800 bg-[#0f172a]">
+                            <div class="font-mono text-sm space-y-2">
+                                <div id="code-line-1" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
+                                    <span class="text-purple-400">int</span> total = 0;
+                                </div>
+                                <div id="code-line-2" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
+                                    <span class="text-purple-400">for</span>(<span class="text-sky-400">int</span> i=0; i&lt;5; i++) {
+                                </div>
+                                <div id="code-line-3" class="pl-8 p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
+                                    total += arr[i];
+                                </div>
+                                <div id="code-line-4" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 pt-6 border-t border-slate-800">
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-4">Variable Watch</h4>
+                                <div class="grid grid-cols-3 gap-4 text-center">
+                                    <div class="bg-slate-800 p-2 rounded">
+                                        <div class="text-xs text-slate-400">i</div>
+                                        <div id="var-i" class="text-xl font-bold text-sky-400 font-mono">0</div>
+                                    </div>
+                                    <div class="bg-slate-800 p-2 rounded">
+                                        <div class="text-xs text-slate-400">arr[i]</div>
+                                        <div id="var-arr" class="text-xl font-bold text-yellow-400 font-mono">10</div>
+                                    </div>
+                                    <div class="bg-slate-800 p-2 rounded">
+                                        <div class="text-xs text-slate-400">total</div>
+                                        <div id="var-total" class="text-xl font-bold text-green-400 font-mono">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 flex flex-col justify-between bg-[#1e293b]">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 text-center">Memory Visualization</h4>
+                                <div class="flex flex-wrap justify-center gap-2" id="visual-array-container">
+                                    </div>
+                            </div>
+
+                            <div class="mt-8">
+                                <div id="loop-status" class="text-sm font-mono text-slate-300 bg-black/30 p-3 rounded border border-slate-700 mb-4 h-12 flex items-center">
+                                    Ready to start loop...
+                                </div>
+                                <button onclick="stepLoop()" id="step-btn" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2">
+                                    <span>▶</span> Execute Next Step
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <script>initLoopSimulator();</script> 
                 </div>
 
                 <h2 class="prose-heading text-2xl">3. Common Algorithms</h2>
