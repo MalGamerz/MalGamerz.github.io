@@ -11,7 +11,8 @@
         .prose-text { line-height: 1.8; color: #cbd5e1; }
         .prose-heading { color: white; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 1rem; margin-top: 2.5rem; }
         .code-block { font-family: 'JetBrains Mono', monospace; background: #0f172a; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.5rem; margin: 1.5rem 0; overflow-x: auto; font-size: 0.9rem; }
-        /* Restored Highlight Box Style */
+        
+        /* Highlight Box Style */
         .highlight-box { border-left-width: 4px; padding: 1.5rem; background: rgba(15, 23, 42, 0.5); border-radius: 0 0.75rem 0.75rem 0; margin: 2rem 0; }
         
         /* Force 16:9 Aspect Ratio for Videos */
@@ -141,29 +142,40 @@
                         </div>
                     </div>
 
-                    <div class="grid md:grid-cols-2 gap-8 my-12 items-start">
-                        <div>
+                    <div class="grid md:grid-cols-2 gap-8 my-12 items-stretch">
+                        
+                        <div class="flex flex-col justify-center">
                             <h2 class="text-2xl font-bold text-white mb-4">Why the +4 Jump?</h2>
-                            <p class="text-slate-300 text-sm mb-4 leading-relaxed">
+                            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
                                 In the simulator above, Address 0 is <code class="text-sky-400">0x100</code> and Address 1 is <code class="text-sky-400">0x104</code>. This isn't random.
                             </p>
-                            <p class="text-slate-300 text-sm mb-4 leading-relaxed">
+                            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
                                 An <code>integer</code> in C++ physically occupies <strong>4 bytes</strong> of RAM. Because arrays are contiguous, the next integer must start exactly where the previous one ended.
                             </p>
-                            <div class="bg-black/40 p-4 rounded-lg border border-slate-800 font-mono text-xs text-slate-400">
-                                <span class="block mb-1">If this were <span class="text-pink-400">double</span> (8 bytes):</span>
-                                <span class="block">0x100 -> 0x108 -> 0x110</span>
-                                <span class="block mt-3 mb-1">If this were <span class="text-green-400">char</span> (1 byte):</span>
-                                <span class="block">0x100 -> 0x101 -> 0x102</span>
+                            <div class="bg-black/40 p-5 rounded-lg border border-slate-800 font-mono text-xs text-slate-400 shadow-inner">
+                                <span class="block mb-2 text-slate-500 font-bold uppercase tracking-wider">Memory Map Examples</span>
+                                <span class="block mb-1">If <span class="text-pink-400">double</span> (8 bytes): 0x100 → 0x108 → 0x110</span>
+                                <span class="block">If <span class="text-green-400">char</span> (1 byte): 0x100 → 0x101 → 0x102</span>
                             </div>
                         </div>
                         
-                        <div class="highlight-box border-l-purple-500 bg-purple-900/10 mt-0">
-                            <h3 class="text-purple-400 font-bold mb-2">🚀 Deep Dive: O(1) Access Time</h3>
-                            <p class="text-sm text-slate-300">
-                                Because the memory is contiguous, the computer doesn't need to "search" for the 500th element. It uses a simple math formula to teleport there instantly:
-                                <br><br>
-                                <code class="bg-black px-2 py-1 rounded text-purple-300 font-mono text-xs block overflow-x-auto">Address = BaseAddress + (Index * SizeOfElement)</code>
+                        <div class="highlight-box border-l-purple-500 bg-slate-800/50 p-6 rounded-r-xl border border-slate-700 mt-0 h-full flex flex-col justify-center">
+                            <h3 class="text-purple-400 font-bold mb-4 text-xl flex items-center gap-2">
+                                <span>🚀</span> Deep Dive: O(1) Access
+                            </h3>
+                            <p class="text-slate-300 text-sm mb-4 leading-relaxed">
+                                Because memory is contiguous, the computer doesn't "search" for data. It teleports instantly using a simple math formula:
+                            </p>
+                            
+                            <div class="bg-black/50 rounded-lg p-4 border border-purple-500/30 shadow-lg mb-4">
+                                <code class="text-purple-300 font-mono text-sm block overflow-x-auto whitespace-nowrap">
+                                    Address = Base + (Index * Size)
+                                </code>
+                            </div>
+
+                            <p class="text-xs text-slate-500 italic">
+                                *Example: To find Index 2 of an int array at 100:*<br>
+                                <span class="font-mono text-slate-400">100 + (2 * 4) = 108</span>
                             </p>
                         </div>
                     </div>
