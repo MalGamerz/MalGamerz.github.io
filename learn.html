@@ -18,9 +18,6 @@
         /* Force 16:9 Aspect Ratio for Videos */
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1rem; border: 1px solid #334155; background: #000; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-        /* Animation for the Array Pointer */
-        .array-pointer { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="bg-[#0f172a] text-slate-300 font-sans flex flex-col h-screen overflow-hidden">
@@ -302,7 +299,7 @@
 
             <div id="topic-5-3" class="tab-content max-w-4xl mx-auto pb-32">
                 <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-widest">5.3 Logic & Algorithms</span>
-                <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">Processing <span class="text-amber-500">Data</span></h1>
+                <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">Populating <span class="text-amber-500">Data</span></h1>
                 
                 <div class="mb-12 shadow-2xl">
                     <div class="video-container">
@@ -314,70 +311,64 @@
                 </div>
 
                 <p class="prose-text mb-8">
-                    An array is useless if you cannot manipulate it. Processing involves traversing the array (usually with loops) to perform operations like summation.
+                    Before you can process data, you must put data <strong>INTO</strong> the array. This is done using a loop to access each index and assigning a value (usually via User Input).
                 </p>
 
                 <div class="bg-[#1e293b] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl mb-12">
                     <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-                        <h3 class="text-white font-bold text-lg">Array Traversal Simulator</h3>
-                        <div class="flex gap-2">
-                            <button onclick="resetLoop()" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded transition">Reset</button>
-                        </div>
+                        <h3 class="text-white font-bold text-lg">Array Input Simulator</h3>
+                        <button onclick="resetInputSimulator()" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded transition">Reset</button>
                     </div>
 
                     <div class="grid md:grid-cols-2">
-                        <div class="p-6 border-r border-slate-800 bg-[#0f172a]">
-                            <div class="font-mono text-sm space-y-2">
+                        <div class="p-6 border-r border-slate-800 bg-[#0f172a] flex flex-col justify-between">
+                            
+                            <div class="font-mono text-sm space-y-2 mb-8">
                                 <div id="code-line-1" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
-                                    <span class="text-purple-400">int</span> total = 0;
+                                    <span class="text-purple-400">int</span> arr[5];
                                 </div>
                                 <div id="code-line-2" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
                                     <span class="text-purple-400">for</span>(<span class="text-sky-400">int</span> i=0; i&lt;5; i++) {
                                 </div>
                                 <div id="code-line-3" class="pl-8 p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
-                                    total += <span class="text-yellow-400 font-bold">arr[i]</span>;
+                                    cin >> <span class="text-yellow-400 font-bold">arr[i]</span>;
                                 </div>
                                 <div id="code-line-4" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
                                     }
                                 </div>
                             </div>
                             
-                            <div class="mt-8 pt-6 border-t border-slate-800">
-                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-4">Variable Watch</h4>
-                                <div class="grid grid-cols-2 gap-4 text-center">
-                                    <div class="bg-slate-800 p-2 rounded">
-                                        <div class="text-xs text-slate-400">total</div>
-                                        <div id="var-total" class="text-xl font-bold text-green-400 font-mono">0</div>
-                                    </div>
-                                    <div class="bg-slate-800 p-2 rounded">
-                                        <div class="text-xs text-slate-400">Current Value (arr[i])</div>
-                                        <div id="var-arr" class="text-xl font-bold text-yellow-400 font-mono">-</div>
-                                    </div>
+                            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                                <label class="text-xs font-bold text-slate-500 uppercase block mb-2">User Input Console</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="user-number-input" placeholder="Value..." disabled 
+                                           class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-white outline-none focus:border-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                                    <button onclick="handleUserSubmit()" id="input-submit-btn" disabled class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Enter
+                                    </button>
+                                </div>
+                                <div class="flex gap-2 mt-2">
+                                    <button onclick="stepInputLoop()" id="step-btn" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 rounded-lg shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2">
+                                        <span>▶</span> Start / Next Step
+                                    </button>
+                                </div>
+                                <div id="loop-status" class="mt-2 text-xs text-slate-400 font-mono min-h-[1.5em]">
+                                    Click Start to begin...
                                 </div>
                             </div>
                         </div>
 
-                        <div class="p-6 flex flex-col justify-between bg-[#1e293b]">
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 text-center">The Array Data Structure</h4>
-                                
-                                <div class="flex justify-center gap-2 mb-2" id="visual-array-container">
-                                    </div>
-                                
-                                <div class="relative h-10 w-full flex justify-center">
-                                    <div id="array-pointer-container" class="flex gap-2 relative">
-                                        </div>
+                        <div class="p-6 bg-[#1e293b] flex flex-col items-center justify-center">
+                            
+                            <h4 class="text-xs font-bold text-slate-500 uppercase mb-6 text-center">System Memory (RAM)</h4>
+                            
+                            <div class="flex justify-center gap-2 mb-2" id="visual-array-container">
                                 </div>
+                            
+                            <div class="relative h-12 w-full flex justify-center mt-2">
+                                <div id="array-pointer-container" class="flex gap-2 relative"></div>
                             </div>
 
-                            <div class="mt-4">
-                                <div id="loop-status" class="text-sm font-mono text-slate-300 bg-black/30 p-3 rounded border border-slate-700 mb-4 h-12 flex items-center">
-                                    Ready to iterate...
-                                </div>
-                                <button onclick="stepLoop()" id="step-btn" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2">
-                                    <span>⬇</span> Access Next Element
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -405,9 +396,6 @@
                 </div>
 
                 <h2 class="prose-heading text-2xl mt-12">4. Advanced: Arrays and Pointers</h2>
-                <p class="prose-text mb-6">
-                    This is where C++ gets powerful. The name of an array is actually a <strong>pointer</strong> to its first element. This concept is critical for understanding how arrays are passed to functions.
-                </p>
                 <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
                     <p class="font-mono text-sm text-slate-300 mb-4">
                         If you declare: <code class="text-pink-400">int x[5];</code>
