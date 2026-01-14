@@ -2,14 +2,14 @@
 // 1. GLOBAL CONFIGURATION & NAVIGATION
 // ==========================================
 
-// Global State for Loop Simulator
-const loopData = [10, 25, 40, 15, 30];
-let loopState = {
-    step: 0, // 0: Check, 1: Add, 2: Increment
+// Global State for Input Simulator
+const INPUT_SIZE = 5;
+let inputState = {
+    step: 0, // 0: Check, 1: Wait for Input, 2: Assign, 3: Increment
     i: 0,
-    total: 0,
     finished: false
 };
+let inputArrayData = Array(INPUT_SIZE).fill('?');
 
 document.addEventListener('DOMContentLoaded', () => {
     loadGlobalElements();
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (learnContainer) {
         setTimeout(() => {
             switchTab('topic-5-1'); 
-            initLoopVisualizer(); // Manually start the visualizer
+            initInputVisualizer(); // Start Input Simulator
         }, 50);
     }
 });
@@ -157,152 +157,186 @@ function switchTab(tabId) {
 // 3. INTERACTIVE VISUALIZERS
 // ==========================================
 
-/* --- NEW: TRUE ARRAY VISUALIZER (Topic 5.3) --- */
-function initLoopVisualizer() {
+/* --- NEW: INPUT SIMULATOR LOGIC (Topic 5.3) --- */
+function initInputVisualizer() {
     const container = document.getElementById('visual-array-container');
     const pointerContainer = document.getElementById('array-pointer-container');
     
     if (!container || !pointerContainer) return; 
     
-    // Clear and build array boxes
     container.innerHTML = '';
-    pointerContainer.innerHTML = ''; // Clear pointer
+    pointerContainer.innerHTML = '';
     
-    loopData.forEach((val, idx) => {
-        // Build Array Box
+    // Create empty boxes
+    for(let i=0; i<INPUT_SIZE; i++) {
         const box = document.createElement('div');
-        box.id = `loop-box-${idx}`;
-        box.className = 'w-14 h-16 bg-slate-700 border-2 border-slate-500 rounded-lg flex flex-col items-center justify-center text-lg font-bold text-white transition-all duration-300 shadow-md relative';
+        box.id = `input-box-${i}`;
+        box.className = 'w-14 h-16 bg-slate-700 border-2 border-slate-500 rounded-lg flex flex-col items-center justify-center text-lg font-bold text-slate-400 transition-all duration-300 shadow-md relative';
         box.innerHTML = `
-            ${val}
-            <span class="absolute -bottom-6 text-[10px] text-slate-500">Idx ${idx}</span>
+            ${inputArrayData[i]}
+            <span class="absolute -bottom-6 text-[10px] text-slate-500">Idx ${i}</span>
         `;
         container.appendChild(box);
 
-        // Build Pointer Placeholder (Invisible for layout)
         const ptr = document.createElement('div');
         ptr.className = 'w-14 flex justify-center';
         ptr.innerHTML = ``; 
         pointerContainer.appendChild(ptr);
-    });
-    
-    updatePointerPosition();
-    updateLoopUI();
-}
-
-function updatePointerPosition() {
-    const pointerContainer = document.getElementById('array-pointer-container');
-    if(!pointerContainer) return;
-    
-    // Clear old pointer
-    Array.from(pointerContainer.children).forEach(child => child.innerHTML = '');
-
-    if (loopState.i < loopData.length && !loopState.finished) {
-        const targetWrapper = pointerContainer.children[loopState.i];
-        if(targetWrapper) {
-            targetWrapper.innerHTML = `
-                <div class="flex flex-col items-center animate-bounce text-sky-400">
-                    <span class="text-xl font-bold">↑</span>
-                    <span class="text-xs font-mono font-bold">i=${loopState.i}</span>
-                </div>
-            `;
-        }
     }
+    
+    updateInputUI();
 }
 
-function resetLoop() {
-    loopState = { step: 0, i: 0, total: 0, finished: false };
-    initLoopVisualizer();
+function resetInputSimulator() {
+    inputState = { step: 0, i: 0, finished: false };
+    inputArrayData = Array(INPUT_SIZE).fill('?');
+    initInputVisualizer();
+    
     const status = document.getElementById('loop-status');
     const btn = document.getElementById('step-btn');
+    const inputField = document.getElementById('user-number-input');
+    const submitBtn = document.getElementById('input-submit-btn');
     
-    if(status) status.innerHTML = "Reset. Ready to start.";
+    if(status) status.innerHTML = "Ready. Click 'Start Loop'.";
     if(btn) {
         btn.disabled = false;
         btn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
+    if(inputField) {
+        inputField.disabled = true;
+        inputField.value = '';
+    }
+    if(submitBtn) submitBtn.disabled = true;
+    
     highlightLine(0);
 }
 
-function stepLoop() {
-    if (loopState.finished) return;
+function stepInputLoop() {
+    if (inputState.finished) return;
 
-    if (loopState.i >= loopData.length) {
-        document.getElementById('loop-status').innerHTML = "<span class='text-green-400 font-bold'>Traversal Complete!</span>";
+    // Check bounds
+    if (inputState.i >= INPUT_SIZE) {
+        document.getElementById('loop-status').innerHTML = "<span class='text-green-400 font-bold'>Population Complete!</span>";
         highlightLine(2); 
         const btn = document.getElementById('step-btn');
         if(btn) {
             btn.disabled = true;
             btn.classList.add('opacity-50', 'cursor-not-allowed');
         }
-        loopState.finished = true;
-        // Remove pointer at end
-        updatePointerPosition();
+        inputState.finished = true;
+        updatePointer(false); // remove pointer
         return;
     }
 
     // STATE MACHINE
-    if (loopState.step === 0) {
+    if (inputState.step === 0) {
         // Step 0: Pointer Arrives (Visualize 'i')
         highlightLine(2);
-        updatePointerPosition();
-        document.getElementById('loop-status').innerHTML = `Index points to <span class="text-sky-400 font-bold">i = ${loopState.i}</span>`;
-        loopState.step = 1;
+        updatePointer(true);
+        document.getElementById('loop-status').innerHTML = `Loop Condition Check: i = ${inputState.i} < 5. <span class="text-green-400 font-bold">TRUE</span>`;
+        inputState.step = 1;
 
-    } else if (loopState.step === 1) {
-        // Step 1: Access Data (Visualize 'arr[i]')
+    } else if (inputState.step === 1) {
+        // Step 1: Wait for Input
         highlightLine(3);
+        document.getElementById('loop-status').innerHTML = `<span class="text-yellow-400 animate-pulse">Waiting for User Input...</span>`;
         
-        // Highlight active box
-        document.querySelectorAll('[id^="loop-box-"]').forEach(b => {
-            b.classList.remove('bg-yellow-500', 'scale-110', 'border-yellow-300', 'text-black');
-            b.classList.add('bg-slate-700', 'text-white');
-        });
-        const activeBox = document.getElementById(`loop-box-${loopState.i}`);
-        if(activeBox) {
-            activeBox.classList.remove('bg-slate-700', 'text-white');
-            activeBox.classList.add('bg-yellow-500', 'scale-110', 'border-yellow-300', 'text-black');
-        }
-
-        const val = loopData[loopState.i];
-        loopState.total += val;
+        // Disable main stepper, Enable input
+        const stepBtn = document.getElementById('step-btn');
+        const inputField = document.getElementById('user-number-input');
+        const submitBtn = document.getElementById('input-submit-btn');
         
-        document.getElementById('loop-status').innerHTML = `Extracted value <span class="text-yellow-400 font-bold">${val}</span>. Adding to Total.`;
-        loopState.step = 2;
+        stepBtn.disabled = true;
+        stepBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        
+        inputField.disabled = false;
+        inputField.focus();
+        submitBtn.disabled = false;
+        
+        // Highlight active box slightly
+        const activeBox = document.getElementById(`input-box-${inputState.i}`);
+        if(activeBox) activeBox.classList.add('border-yellow-400');
 
-    } else if (loopState.step === 2) {
-        // Step 2: Increment
+    } else if (inputState.step === 2) {
+        // Step 2: Assign Value (Done by handleUserSubmit)
+        // This block acts as a bridge after submit is clicked
+        
+    } else if (inputState.step === 3) {
+        // Step 3: Increment
         highlightLine(2); 
-        loopState.i++;
-        updatePointerPosition(); // Move pointer
-        document.getElementById('loop-status').innerHTML = `Incrementing... Moving to next index.`;
+        inputState.i++;
+        updatePointer(true); // Move pointer
+        document.getElementById('loop-status').innerHTML = `Incrementing i...`;
         
         // Remove highlight from previous box
-        const prevBox = document.getElementById(`loop-box-${loopState.i-1}`);
+        const prevBox = document.getElementById(`input-box-${inputState.i-1}`);
         if(prevBox) {
-             prevBox.classList.remove('bg-yellow-500', 'scale-110', 'border-yellow-300', 'text-black');
-             prevBox.classList.add('bg-slate-700', 'text-white');
+             prevBox.classList.remove('bg-sky-600', 'text-white', 'scale-105');
+             prevBox.classList.add('bg-slate-700', 'text-slate-400');
         }
 
-        loopState.step = 0; // Loop back
+        inputState.step = 0; // Loop back
     }
-
-    updateLoopUI();
 }
 
-function updateLoopUI() {
-    const totalEl = document.getElementById('var-total');
-    const arrEl = document.getElementById('var-arr');
-
-    if(totalEl) totalEl.innerText = loopState.total;
+function handleUserSubmit() {
+    const inputField = document.getElementById('user-number-input');
+    const val = parseInt(inputField.value);
     
-    if(arrEl) {
-        if (loopState.i < loopData.length) {
-            // Show value if we are accessing
-            if(loopState.step === 2) arrEl.innerText = loopData[loopState.i];
-            else if(loopState.step === 1) arrEl.innerText = "-"; // wait for access
-        } else {
-            arrEl.innerText = "-";
+    if(isNaN(val)) {
+        alert("Please enter a valid number!");
+        return;
+    }
+    
+    // Update Data
+    inputArrayData[inputState.i] = val;
+    
+    // Update UI Box
+    const box = document.getElementById(`input-box-${inputState.i}`);
+    if(box) {
+        box.innerHTML = `
+            ${val}
+            <span class="absolute -bottom-6 text-[10px] text-slate-500">Idx ${inputState.i}</span>
+        `;
+        box.classList.remove('bg-slate-700', 'text-slate-400', 'border-yellow-400');
+        box.classList.add('bg-sky-600', 'text-white', 'scale-105', 'border-sky-400');
+    }
+
+    // Reset Input Controls
+    inputField.value = '';
+    inputField.disabled = true;
+    document.getElementById('input-submit-btn').disabled = true;
+    
+    // Re-enable Main Stepper
+    const stepBtn = document.getElementById('step-btn');
+    stepBtn.disabled = false;
+    stepBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    
+    document.getElementById('loop-status').innerHTML = `Value <span class="text-sky-400 font-bold">${val}</span> stored at index ${inputState.i}.`;
+    
+    inputState.step = 3; // Move to increment next
+}
+
+function updateInputUI() {
+    // Helper to refresh whole array if needed (rarely used in this flow)
+}
+
+function updatePointer(show) {
+    const pointerContainer = document.getElementById('array-pointer-container');
+    if(!pointerContainer) return;
+    
+    // Clear old pointer
+    Array.from(pointerContainer.children).forEach(child => child.innerHTML = '');
+
+    if (show && inputState.i < INPUT_SIZE) {
+        const targetWrapper = pointerContainer.children[inputState.i];
+        if(targetWrapper) {
+            targetWrapper.innerHTML = `
+                <div class="flex flex-col items-center animate-bounce text-sky-400">
+                    <span class="text-xl font-bold">↑</span>
+                    <span class="text-xs font-mono font-bold">i=${inputState.i}</span>
+                </div>
+            `;
         }
     }
 }
@@ -425,7 +459,8 @@ function initParallax() {
 
 // Expose functions to window (optional but good for HTML onclick handlers)
 window.switchTab = switchTab;
-window.resetLoop = resetLoop;
-window.stepLoop = stepLoop;
+window.resetInputSimulator = resetInputSimulator;
+window.stepInputLoop = stepInputLoop;
+window.handleUserSubmit = handleUserSubmit;
 window.toggleMemory = toggleMemory;
 window.visualizeString = visualizeString;
