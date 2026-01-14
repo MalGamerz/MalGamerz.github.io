@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize specific simulators when on learn.html
     const learnContainer = document.getElementById('learn-content-container');
     if (learnContainer) {
-        // We use a slight timeout to ensure all DOM elements are painted
         setTimeout(() => {
             switchTab('topic-5-1'); 
             initLoopVisualizer(); // Manually start the visualizer
@@ -158,26 +157,57 @@ function switchTab(tabId) {
 // 3. INTERACTIVE VISUALIZERS
 // ==========================================
 
-/* --- TRUE LOOP SIMULATOR LOGIC (Topic 5.3) --- */
+/* --- NEW: TRUE ARRAY VISUALIZER (Topic 5.3) --- */
 function initLoopVisualizer() {
     const container = document.getElementById('visual-array-container');
-    if (!container) return; 
+    const pointerContainer = document.getElementById('array-pointer-container');
     
+    if (!container || !pointerContainer) return; 
+    
+    // Clear and build array boxes
     container.innerHTML = '';
+    pointerContainer.innerHTML = ''; // Clear pointer
     
     loopData.forEach((val, idx) => {
+        // Build Array Box
         const box = document.createElement('div');
         box.id = `loop-box-${idx}`;
-        // Changed bg-slate-800 to bg-slate-700 for better visibility
-        box.className = 'w-12 h-14 bg-slate-700 border border-slate-500 rounded flex flex-col items-center justify-center text-sm font-bold transition-all duration-300 shadow-md';
+        box.className = 'w-14 h-16 bg-slate-700 border-2 border-slate-500 rounded-lg flex flex-col items-center justify-center text-lg font-bold text-white transition-all duration-300 shadow-md relative';
         box.innerHTML = `
-            <span class="text-white">${val}</span>
-            <span class="text-[9px] text-slate-400 mt-1">${idx}</span>
+            ${val}
+            <span class="absolute -bottom-6 text-[10px] text-slate-500">Idx ${idx}</span>
         `;
         container.appendChild(box);
+
+        // Build Pointer Placeholder (Invisible for layout)
+        const ptr = document.createElement('div');
+        ptr.className = 'w-14 flex justify-center';
+        ptr.innerHTML = ``; 
+        pointerContainer.appendChild(ptr);
     });
     
+    updatePointerPosition();
     updateLoopUI();
+}
+
+function updatePointerPosition() {
+    const pointerContainer = document.getElementById('array-pointer-container');
+    if(!pointerContainer) return;
+    
+    // Clear old pointer
+    Array.from(pointerContainer.children).forEach(child => child.innerHTML = '');
+
+    if (loopState.i < loopData.length && !loopState.finished) {
+        const targetWrapper = pointerContainer.children[loopState.i];
+        if(targetWrapper) {
+            targetWrapper.innerHTML = `
+                <div class="flex flex-col items-center animate-bounce text-sky-400">
+                    <span class="text-xl font-bold">↑</span>
+                    <span class="text-xs font-mono font-bold">i=${loopState.i}</span>
+                </div>
+            `;
+        }
+    }
 }
 
 function resetLoop() {
@@ -198,7 +228,7 @@ function stepLoop() {
     if (loopState.finished) return;
 
     if (loopState.i >= loopData.length) {
-        document.getElementById('loop-status').innerHTML = "<span class='text-green-400 font-bold'>Loop Finished!</span>";
+        document.getElementById('loop-status').innerHTML = "<span class='text-green-400 font-bold'>Traversal Complete!</span>";
         highlightLine(2); 
         const btn = document.getElementById('step-btn');
         if(btn) {
@@ -206,59 +236,71 @@ function stepLoop() {
             btn.classList.add('opacity-50', 'cursor-not-allowed');
         }
         loopState.finished = true;
+        // Remove pointer at end
+        updatePointerPosition();
         return;
     }
 
     // STATE MACHINE
     if (loopState.step === 0) {
-        // Step 0: Check Condition
+        // Step 0: Pointer Arrives (Visualize 'i')
         highlightLine(2);
-        document.getElementById('loop-status').innerHTML = `Checking: Is i (${loopState.i}) < 5? <span class="text-green-400 font-bold">TRUE</span>`;
+        updatePointerPosition();
+        document.getElementById('loop-status').innerHTML = `Index points to <span class="text-sky-400 font-bold">i = ${loopState.i}</span>`;
         loopState.step = 1;
 
     } else if (loopState.step === 1) {
-        // Step 1: Execute Body
+        // Step 1: Access Data (Visualize 'arr[i]')
         highlightLine(3);
         
         // Highlight active box
         document.querySelectorAll('[id^="loop-box-"]').forEach(b => {
-            b.classList.remove('bg-sky-600', 'scale-110', 'border-sky-400');
-            b.classList.add('bg-slate-700');
+            b.classList.remove('bg-yellow-500', 'scale-110', 'border-yellow-300', 'text-black');
+            b.classList.add('bg-slate-700', 'text-white');
         });
         const activeBox = document.getElementById(`loop-box-${loopState.i}`);
         if(activeBox) {
-            activeBox.classList.remove('bg-slate-700');
-            activeBox.classList.add('bg-sky-600', 'scale-110', 'border-sky-400');
+            activeBox.classList.remove('bg-slate-700', 'text-white');
+            activeBox.classList.add('bg-yellow-500', 'scale-110', 'border-yellow-300', 'text-black');
         }
 
         const val = loopData[loopState.i];
         loopState.total += val;
         
-        document.getElementById('loop-status').innerHTML = `Adding ${val} to Total. New Total: <span class="text-white font-bold">${loopState.total}</span>`;
+        document.getElementById('loop-status').innerHTML = `Extracted value <span class="text-yellow-400 font-bold">${val}</span>. Adding to Total.`;
         loopState.step = 2;
 
     } else if (loopState.step === 2) {
         // Step 2: Increment
         highlightLine(2); 
         loopState.i++;
-        document.getElementById('loop-status').innerHTML = `Incrementing i. New i: <span class="text-sky-400 font-bold">${loopState.i}</span>`;
-        loopState.step = 0; 
+        updatePointerPosition(); // Move pointer
+        document.getElementById('loop-status').innerHTML = `Incrementing... Moving to next index.`;
+        
+        // Remove highlight from previous box
+        const prevBox = document.getElementById(`loop-box-${loopState.i-1}`);
+        if(prevBox) {
+             prevBox.classList.remove('bg-yellow-500', 'scale-110', 'border-yellow-300', 'text-black');
+             prevBox.classList.add('bg-slate-700', 'text-white');
+        }
+
+        loopState.step = 0; // Loop back
     }
 
     updateLoopUI();
 }
 
 function updateLoopUI() {
-    const iEl = document.getElementById('var-i');
     const totalEl = document.getElementById('var-total');
     const arrEl = document.getElementById('var-arr');
 
-    if(iEl) iEl.innerText = loopState.i;
     if(totalEl) totalEl.innerText = loopState.total;
     
     if(arrEl) {
         if (loopState.i < loopData.length) {
-            arrEl.innerText = loopData[loopState.i];
+            // Show value if we are accessing
+            if(loopState.step === 2) arrEl.innerText = loopData[loopState.i];
+            else if(loopState.step === 1) arrEl.innerText = "-"; // wait for access
         } else {
             arrEl.innerText = "-";
         }
