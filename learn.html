@@ -73,6 +73,13 @@
                     </div>
                 </div>
 
+                <figure class="mb-10">
+                    <div class="bg-white p-4 rounded-xl border border-slate-700">
+                        <img src="https://www2.hawaii.edu/~walbritt/ics212/materials/arrays_h1_381x122.gif" alt="Memory Layout Diagram" class="w-full rounded-lg">
+                    </div>
+                    <figcaption class="text-center text-xs text-slate-500 mt-3 font-mono">Figure 1: Visualizing Contiguous Memory Allocation</figcaption>
+                </figure>
+
                 <div class="prose-text text-lg space-y-8">
                     
                     <div>
@@ -81,7 +88,7 @@
                             To master C++, you must stop thinking of variables as abstract "containers" and start thinking of them as <strong>physical locations</strong>. 
                         </p>
                         <p class="mt-4 text-slate-300">
-                            An array is a fixed-size collection of elements of the <strong>same data type</strong>, stored in <strong>contiguous</strong> memory locations. "Contiguous" is the most important word here—it means the data is stored side-by-side, sharing walls, with absolutely no gaps in between.
+                            As shown in <strong>Figure 1</strong> above, an array is a collection of elements of the <strong>same data type</strong>, stored in <strong>contiguous</strong> memory locations. "Contiguous" means they are side-by-side, sharing walls, with absolutely no gaps.
                         </p>
                     </div>
 
@@ -94,24 +101,17 @@
                             <li class="flex items-start gap-3">
                                 <span class="text-xl">🏠</span>
                                 <div>
-                                    <strong class="text-white">Normal Variables:</strong> usually scattered randomly across the city. To visit 5 friends, you drive to 5 different locations.
+                                    <strong class="text-white">Normal Variables:</strong> scattered randomly across the city. To visit 5 friends, you drive to 5 different addresses.
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="text-xl">🏘️</span>
                                 <div>
-                                    <strong class="text-white">Arrays:</strong> A row of townhouses. If you know where the <strong>first</strong> house is (the Base Address), and you know every house is exactly 10 meters wide, you don't need a map to find the 5th house. You just do math.
+                                    <strong class="text-white">Arrays:</strong> A row of townhouses. If you know where the <strong>first</strong> house is (Base Address), and you know every house is exactly 10 meters wide, you don't need a map to find the 5th house. You just do math.
                                 </div>
                             </li>
                         </ul>
                     </div>
-
-                    <figure class="my-12">
-                        <div class="bg-white p-4 rounded-xl border border-slate-700">
-                            <img src="https://www2.hawaii.edu/~walbritt/ics212/materials/arrays_h1_381x122.gif" alt="Memory Layout Diagram" class="w-full rounded-lg">
-                        </div>
-                        <figcaption class="text-center text-xs text-slate-500 mt-3 font-mono">Figure 1: Visualizing Contiguous Memory Allocation</figcaption>
-                    </figure>
 
                     <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-2xl overflow-hidden my-12">
                         <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
