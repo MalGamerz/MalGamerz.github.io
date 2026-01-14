@@ -11,13 +11,12 @@
         .prose-text { line-height: 1.8; color: #cbd5e1; }
         .prose-heading { color: white; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 1rem; margin-top: 2.5rem; }
         .code-block { font-family: 'JetBrains Mono', monospace; background: #0f172a; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.5rem; margin: 1.5rem 0; overflow-x: auto; font-size: 0.9rem; }
-        
-        /* Highlight Box Style */
         .highlight-box { border-left-width: 4px; padding: 1.5rem; background: rgba(15, 23, 42, 0.5); border-radius: 0 0.75rem 0.75rem 0; margin: 2rem 0; }
-        
-        /* Force 16:9 Aspect Ratio for Videos */
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1rem; border: 1px solid #334155; background: #000; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        /* Pointer Animation */
+        .bounce-arrow { animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
 <body class="bg-[#0f172a] text-slate-300 font-sans flex flex-col h-screen overflow-hidden">
@@ -34,12 +33,12 @@
 
     <div class="flex flex-grow pt-32 md:pt-20 h-full" id="learn-content-container">
         
-        <aside class="w-80 bg-[#0b1120] border-r border-slate-800 hidden md:flex flex-col overflow-y-auto z-30 shrink-0">
+        <aside class="w-80 bg-[#0b1120] border-r border-slate-800 hidden md:flex flex-col z-30 shrink-0 h-full">
             <div class="p-6 sticky top-0 bg-[#0b1120] z-10 border-b border-slate-800">
                 <h2 class="text-white font-black text-xl mb-1 tracking-tight">Topic 5: Arrays</h2>
                 <span class="text-xs font-bold text-sky-500 uppercase tracking-widest">Complete Mastery</span>
             </div>
-            <nav class="flex-1 space-y-1 py-4">
+            <nav class="flex-1 space-y-1 py-4 overflow-y-auto">
                 <button onclick="switchTab('topic-5-1')" id="btn-topic-5-1" class="nav-item w-full text-left px-6 py-4 text-sm font-medium transition-all border-l-4 border-sky-500 bg-slate-800/50 text-white">
                     <span class="block text-xs text-slate-500 uppercase mb-1">Part 1</span>
                     Memory Architecture & Theory
@@ -53,381 +52,385 @@
                     Algorithms & Processing
                 </button>
             </nav>
-            <div class="p-6 border-t border-slate-800 bg-[#0b1120]">
+            <div class="p-6 border-t border-slate-800 bg-[#0b1120] shrink-0">
                 <a href="activity.html" class="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-center rounded-xl font-bold shadow-lg shadow-sky-900/20 transition transform hover:scale-[1.02]">
                     <span>🚀</span> Test Your Skills
                 </a>
             </div>
         </aside>
 
-        <main class="flex-1 overflow-y-auto p-6 md:p-12 relative scroll-smooth bg-slate-900/30">
+        <main class="flex-1 flex flex-col h-full overflow-y-auto relative scroll-smooth bg-slate-900/30">
             
-            <div id="topic-5-1" class="tab-content max-w-4xl mx-auto pb-32">
-                <span class="px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 uppercase tracking-widest">5.1 Fundamentals</span>
-                <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">The Physics of <span class="text-sky-500">Memory</span></h1>
+            <div class="flex-grow p-6 md:p-12">
                 
-                <div class="mb-12 shadow-2xl">
-                    <div class="video-container">
-                        <iframe src="https://www.youtube-nocookie.com/embed/1FVBeLD_FdE?si=rKxZgchU7AELg16l" title="C++ Arrays Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div id="topic-5-1" class="tab-content max-w-4xl mx-auto pb-12">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 uppercase tracking-widest">5.1 Fundamentals</span>
+                    <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">The Physics of <span class="text-sky-500">Memory</span></h1>
+                    
+                    <div class="mb-12 shadow-2xl">
+                        <div class="video-container">
+                            <iframe src="https://www.youtube-nocookie.com/embed/1FVBeLD_FdE?si=rKxZgchU7AELg16l" title="C++ Arrays Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div class="bg-slate-800 p-3 text-xs text-slate-400 text-center rounded-b-xl">
+                            Lecture 5.1: Introduction to Arrays
+                        </div>
                     </div>
-                    <div class="bg-slate-800 p-3 text-xs text-slate-400 text-center rounded-b-xl">
-                        Lecture 5.1: Introduction to Arrays
+
+                    <figure class="mb-10">
+                        <div class="bg-white p-4 rounded-xl border border-slate-700">
+                            <img src="https://www2.hawaii.edu/~walbritt/ics212/materials/arrays_h1_381x122.gif" alt="Memory Layout Diagram" class="w-full rounded-lg">
+                        </div>
+                        <figcaption class="text-center text-xs text-slate-500 mt-3 font-mono">Figure 1: Visualizing Contiguous Memory Allocation</figcaption>
+                    </figure>
+
+                    <div class="prose-text text-lg space-y-8">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white mb-4">What is an Array, actually?</h2>
+                            <p class="text-slate-300">
+                                To master C++, you must stop thinking of variables as abstract "containers" and start thinking of them as <strong>physical locations</strong>. 
+                            </p>
+                            <p class="mt-4 text-slate-300">
+                                As shown in <strong>Figure 1</strong> above, an array is a collection of elements of the <strong>same data type</strong>, stored in <strong>contiguous</strong> memory locations. "Contiguous" means they are side-by-side, sharing walls, with absolutely no gaps.
+                            </p>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] p-6 rounded-2xl border-l-4 border-sky-500 my-8">
+                            <h3 class="text-sky-400 font-bold text-lg mb-2">💡 The "Street" Analogy</h3>
+                            <p class="text-sm text-slate-400 mb-4">
+                                Imagine a street where you own 5 houses in a row.
+                            </p>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start gap-3">
+                                    <span class="text-xl">🏠</span>
+                                    <div>
+                                        <strong class="text-white">Normal Variables:</strong> scattered randomly across the city. To visit 5 friends, you drive to 5 different addresses.
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="text-xl">🏘️</span>
+                                    <div>
+                                        <strong class="text-white">Arrays:</strong> A row of townhouses. If you know where the <strong>first</strong> house is (Base Address), and you know every house is exactly 10 meters wide, you don't need a map to find the 5th house. You just do math.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-2xl overflow-hidden my-12">
+                            <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                                <span class="text-sm font-bold text-slate-400 uppercase tracking-wider">RAM Inspection Tool</span>
+                                <div class="flex space-x-1"><div class="w-3 h-3 rounded-full bg-red-500/20"></div><div class="w-3 h-3 rounded-full bg-yellow-500/20"></div><div class="w-3 h-3 rounded-full bg-green-500/20"></div></div>
+                            </div>
+                            <div class="p-8 md:p-12 text-center">
+                                <p class="mb-8 text-slate-400">Click the memory cells. Observe the <strong>Hexadecimal Addresses</strong>.</p>
+                                <div class="flex flex-wrap justify-center gap-4 md:gap-8">
+                                    <div onclick="toggleMemory(0)" id="mem-box-0" class="memory-box w-28 h-36 bg-slate-800 border-2 border-slate-600 rounded-xl flex flex-col items-center justify-center relative shadow-lg group hover:border-sky-500 transition-all cursor-pointer">
+                                        <div class="absolute -top-3 bg-black px-2 text-xs text-sky-400 font-mono border border-slate-700 rounded shadow-sm">0x100</div>
+                                        <span id="mem-val-0" class="text-white font-bold text-4xl opacity-0 transition scale-50 group-hover:scale-75">85</span>
+                                        <span class="absolute bottom-2 text-[10px] font-bold text-slate-500 bg-slate-900/50 px-2 py-1 rounded uppercase tracking-widest">Index 0</span>
+                                    </div>
+                                    <div onclick="toggleMemory(1)" id="mem-box-1" class="memory-box w-28 h-36 bg-slate-800 border-2 border-slate-600 rounded-xl flex flex-col items-center justify-center relative shadow-lg group hover:border-sky-500 transition-all cursor-pointer">
+                                        <div class="absolute -top-3 bg-black px-2 text-xs text-sky-400 font-mono border border-slate-700 rounded shadow-sm">0x104</div>
+                                        <span id="mem-val-1" class="text-white font-bold text-4xl opacity-0 transition scale-50 group-hover:scale-75">92</span>
+                                        <span class="absolute bottom-2 text-[10px] font-bold text-slate-500 bg-slate-900/50 px-2 py-1 rounded uppercase tracking-widest">Index 1</span>
+                                    </div>
+                                    <div onclick="toggleMemory(2)" id="mem-box-2" class="memory-box w-28 h-36 bg-slate-800 border-2 border-slate-600 rounded-xl flex flex-col items-center justify-center relative shadow-lg group hover:border-sky-500 transition-all cursor-pointer">
+                                        <div class="absolute -top-3 bg-black px-2 text-xs text-sky-400 font-mono border border-slate-700 rounded shadow-sm">0x108</div>
+                                        <span id="mem-val-2" class="text-white font-bold text-4xl opacity-0 transition scale-50 group-hover:scale-75">47</span>
+                                        <span class="absolute bottom-2 text-[10px] font-bold text-slate-500 bg-slate-900/50 px-2 py-1 rounded uppercase tracking-widest">Index 2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8 my-12 items-stretch">
+                            <div class="flex flex-col justify-center">
+                                <h2 class="text-2xl font-bold text-white mb-4">Why the +4 Jump?</h2>
+                                <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                                    In the simulator above, Address 0 is <code class="text-sky-400">0x100</code> and Address 1 is <code class="text-sky-400">0x104</code>. This isn't random.
+                                </p>
+                                <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                                    An <code>integer</code> in C++ physically occupies <strong>4 bytes</strong> of RAM. Because arrays are contiguous, the next integer must start exactly where the previous one ended.
+                                </p>
+                                <div class="bg-black/40 p-5 rounded-lg border border-slate-800 font-mono text-xs text-slate-400 shadow-inner">
+                                    <span class="block mb-2 text-slate-500 font-bold uppercase tracking-wider">Memory Map Examples</span>
+                                    <span class="block mb-1">If <span class="text-pink-400">double</span> (8 bytes): 0x100 → 0x108 → 0x110</span>
+                                    <span class="block">If <span class="text-green-400">char</span> (1 byte): 0x100 → 0x101 → 0x102</span>
+                                </div>
+                            </div>
+                            
+                            <div class="highlight-box border-l-purple-500 bg-slate-800/50 p-6 rounded-r-xl border border-slate-700 mt-0 h-full flex flex-col justify-center">
+                                <h3 class="text-purple-400 font-bold mb-4 text-xl flex items-center gap-2">
+                                    <span>🚀</span> Deep Dive: O(1) Access
+                                </h3>
+                                <p class="text-slate-300 text-sm mb-4 leading-relaxed">
+                                    Because memory is contiguous, the computer doesn't "search" for data. It teleports instantly using a simple math formula:
+                                </p>
+                                
+                                <div class="bg-black/50 rounded-lg p-4 border border-purple-500/30 shadow-lg mb-4">
+                                    <code class="text-purple-300 font-mono text-sm block overflow-x-auto whitespace-nowrap">
+                                        Address = Base + (Index * Size)
+                                    </code>
+                                </div>
+
+                                <p class="text-xs text-slate-500 italic">
+                                    *Example: To find Index 2 of an int array at 100:*<br>
+                                    <span class="font-mono text-slate-400">100 + (2 * 4) = 108</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-800 pt-12">
+                            <h2 class="text-2xl font-bold text-white mb-6">Why do we start at 0?</h2>
+                            <div class="flex flex-col md:flex-row gap-8">
+                                <div class="flex-1">
+                                    <p class="text-slate-300 mb-4">
+                                        It's a common confusion: "If it's the 1st element, why is the index 0?"
+                                    </p>
+                                    <p class="text-slate-300">
+                                        <strong>The Index represents "Distance", not "Count".</strong>
+                                    </p>
+                                    <p class="text-slate-400 text-sm mt-4">
+                                        Think of the index as: <em>"How many steps away from the start are we?"</em>
+                                    </p>
+                                    <ul class="mt-4 space-y-2 text-sm">
+                                        <li class="flex items-center gap-2">
+                                            <span class="bg-sky-500/20 text-sky-400 px-2 py-1 rounded font-mono text-xs">arr[0]</span>
+                                            <span class="text-slate-400">0 steps from the start (The start itself).</span>
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <span class="bg-sky-500/20 text-sky-400 px-2 py-1 rounded font-mono text-xs">arr[1]</span>
+                                            <span class="text-slate-400">1 step away (The neighbor).</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="flex-1 bg-[#0b1120] p-6 rounded-xl border border-slate-800 flex flex-col justify-center items-center text-center">
+                                    <div class="font-mono text-xs text-slate-500 mb-2">VISUALIZING OFFSET</div>
+                                    <div class="flex items-center">
+                                        <div class="w-12 h-12 border-2 border-dashed border-slate-600 rounded-l flex items-center justify-center text-slate-500 text-xs">Base</div>
+                                        <div class="h-1 w-8 bg-sky-500"></div>
+                                        <div class="w-12 h-12 bg-sky-600 text-white font-bold flex items-center justify-center rounded shadow-[0_0_15px_rgba(2,132,199,0.5)]">Data</div>
+                                    </div>
+                                    <div class="mt-4 text-xs text-sky-400 font-mono">
+                                        Offset = 1 Unit<br>(Index 1)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <figure class="mb-10">
-                    <div class="bg-white p-4 rounded-xl border border-slate-700">
-                        <img src="https://www2.hawaii.edu/~walbritt/ics212/materials/arrays_h1_381x122.gif" alt="Memory Layout Diagram" class="w-full rounded-lg">
-                    </div>
-                    <figcaption class="text-center text-xs text-slate-500 mt-3 font-mono">Figure 1: Visualizing Contiguous Memory Allocation</figcaption>
-                </figure>
+                <div id="topic-5-2" class="tab-content max-w-4xl mx-auto pb-12">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-widest">5.2 Rules & Syntax</span>
+                    <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">Declaration <span class="text-purple-400">Mastery</span></h1>
 
-                <div class="prose-text text-lg space-y-8">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white mb-4">What is an Array, actually?</h2>
-                        <p class="text-slate-300">
-                            To master C++, you must stop thinking of variables as abstract "containers" and start thinking of them as <strong>physical locations</strong>. 
-                        </p>
-                        <p class="mt-4 text-slate-300">
-                            As shown in <strong>Figure 1</strong> above, an array is a collection of elements of the <strong>same data type</strong>, stored in <strong>contiguous</strong> memory locations. "Contiguous" means they are side-by-side, sharing walls, with absolutely no gaps.
-                        </p>
-                    </div>
+                    <p class="prose-text mb-8 text-justify">
+                        Declaring an array tells the compiler to reserve a specific block of memory. Unlike high-level languages (like Python or JS), C++ arrays are <strong>static</strong>—their size cannot change once the program is running.
+                    </p>
 
-                    <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] p-6 rounded-2xl border-l-4 border-sky-500 my-8">
-                        <h3 class="text-sky-400 font-bold text-lg mb-2">💡 The "Street" Analogy</h3>
-                        <p class="text-sm text-slate-400 mb-4">
-                            Imagine a street where you own 5 houses in a row.
-                        </p>
-                        <ul class="space-y-3 text-sm">
-                            <li class="flex items-start gap-3">
-                                <span class="text-xl">🏠</span>
-                                <div>
-                                    <strong class="text-white">Normal Variables:</strong> scattered randomly across the city. To visit 5 friends, you drive to 5 different addresses.
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="text-xl">🏘️</span>
-                                <div>
-                                    <strong class="text-white">Arrays:</strong> A row of townhouses. If you know where the <strong>first</strong> house is (Base Address), and you know every house is exactly 10 meters wide, you don't need a map to find the 5th house. You just do math.
-                                </div>
-                            </li>
-                        </ul>
+                    <h2 class="prose-heading text-2xl clear-both pt-8">1. The Anatomy of Declaration</h2>
+                    
+                    <div class="mb-12 bg-[#111827] p-8 md:p-12 rounded-2xl border border-slate-800 shadow-xl overflow-x-auto">
+                        <div class="flex items-start justify-center gap-2 md:gap-6 font-mono text-3xl md:text-5xl whitespace-nowrap min-h-[100px]">
+                            <div class="group flex flex-col items-center cursor-help relative">
+                                <span class="token-kw border-b-4 border-transparent group-hover:border-purple-500 transition-all duration-300 pb-1">int</span>
+                                <span class="absolute top-full mt-4 text-xs md:text-sm text-purple-400 font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-[-10px] group-hover:translate-y-0">Data Type</span>
+                            </div>
+                            <div class="group flex flex-col items-center cursor-help relative">
+                                <span class="token-fn border-b-4 border-transparent group-hover:border-sky-500 transition-all duration-300 pb-1">scores</span>
+                                <span class="absolute top-full mt-4 text-xs md:text-sm text-sky-400 font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-[-10px] group-hover:translate-y-0">Identifier</span>
+                            </div>
+                            <span class="text-slate-600">[</span>
+                            <div class="group flex flex-col items-center cursor-help relative">
+                                <span class="token-num border-b-4 border-transparent group-hover:border-yellow-500 transition-all duration-300 pb-1">10</span>
+                                <span class="absolute top-full mt-4 text-xs md:text-sm text-yellow-400 font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-[-10px] group-hover:translate-y-0">Capacity</span>
+                            </div>
+                            <span class="text-slate-600">]</span><span class="text-slate-500">;</span>
+                        </div>
                     </div>
 
-                    <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-2xl overflow-hidden my-12">
+                    <h2 class="prose-heading text-2xl">2. Initialization Patterns (The 4 Ways)</h2>
+                    <p class="mb-6 prose-text">There are four distinct ways to set the initial values of an array. Choosing the wrong one can lead to bugs.</p>
+                    
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-green-500">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-green-400 font-bold">A. Full Initialization</h4>
+                                <span class="text-[10px] bg-green-900/30 text-green-400 px-2 py-1 rounded border border-green-500/30">Safe</span>
+                            </div>
+                            <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
+                                <span class="token-kw">int</span> arr[3] = {<span class="token-num">10</span>, <span class="token-num">20</span>, <span class="token-num">30</span>};
+                            </code>
+                            <p class="text-xs text-slate-400">Explicitly sets every value. No ambiguity. Best for small, fixed data sets.</p>
+                        </div>
+
+                        <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-sky-500">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-sky-400 font-bold">B. Partial Initialization (The "Zero" Trick)</h4>
+                                <span class="text-[10px] bg-sky-900/30 text-sky-400 px-2 py-1 rounded border border-sky-500/30">Pro Tip</span>
+                            </div>
+                            <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
+                                <span class="token-kw">int</span> arr[5] = {<span class="token-num">10</span>, <span class="token-num">20</span>}; <span class="token-cmt">// Rest becomes 0</span>
+                            </code>
+                            <p class="text-xs text-slate-400">Sets indices 0 and 1. <strong class="text-white">Crucially, the compiler automatically fills the remaining slots with 0.</strong> This is the fastest way to zero-out a large array: <code>int x[1000] = {0};</code></p>
+                        </div>
+
+                        <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-yellow-500">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-yellow-400 font-bold">C. Implicit Sizing</h4>
+                                <span class="text-[10px] bg-yellow-900/30 text-yellow-400 px-2 py-1 rounded border border-yellow-500/30">Situational</span>
+                            </div>
+                            <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
+                                <span class="token-kw">int</span> arr[] = {<span class="token-num">1</span>, <span class="token-num">2</span>, <span class="token-num">3</span>}; <span class="token-cmt">// Size becomes 3</span>
+                            </code>
+                            <p class="text-xs text-slate-400">The compiler counts the elements for you. Useful when you don't want to manually count, but dangerous if you later need to append data, as the size is locked at 3.</p>
+                        </div>
+
+                        <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-red-500">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-red-400 font-bold">D. No Initialization</h4>
+                                <span class="text-[10px] bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-500/30">Danger</span>
+                            </div>
+                            <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
+                                <span class="token-kw">int</span> arr[5];
+                            </code>
+                            <p class="text-xs text-slate-400">The array contains <strong>Garbage Values</strong> (random data left over in RAM from previous programs). Accessing this without assigning values first will cause calculation errors.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="topic-5-3" class="tab-content max-w-4xl mx-auto pb-12">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-widest">5.3 Logic & Algorithms</span>
+                    <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">Populating <span class="text-amber-500">Data</span></h1>
+                    
+                    <div class="mb-12 shadow-2xl">
+                        <div class="video-container">
+                            <iframe src="https://www.youtube.com/embed/vLnPwxZdW4Y?si=AMqfMDZbDb0xPsrw&amp;start=9921" title="Full C++ Course" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div class="bg-slate-800 p-3 text-xs text-slate-400 text-center rounded-b-xl">
+                            Lecture 5.3: C++ Arrays Full Course (Source: FreeCodeCamp)
+                        </div>
+                    </div>
+
+                    <p class="prose-text mb-8">
+                        Before you can process data, you must put data <strong>INTO</strong> the array. This is done using a loop to access each index and assigning a value (usually via User Input).
+                    </p>
+
+                    <div class="bg-[#1e293b] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl mb-12">
                         <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-                            <span class="text-sm font-bold text-slate-400 uppercase tracking-wider">RAM Inspection Tool</span>
-                            <div class="flex space-x-1"><div class="w-3 h-3 rounded-full bg-red-500/20"></div><div class="w-3 h-3 rounded-full bg-yellow-500/20"></div><div class="w-3 h-3 rounded-full bg-green-500/20"></div></div>
+                            <h3 class="text-white font-bold text-lg">Array Input Simulator</h3>
+                            <button onclick="resetInputSimulator()" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded transition">Reset</button>
                         </div>
-                        <div class="p-8 md:p-12 text-center">
-                            <p class="mb-8 text-slate-400">Click the memory cells. Observe the <strong>Hexadecimal Addresses</strong>.</p>
-                            <div class="flex flex-wrap justify-center gap-4 md:gap-8">
-                                <div onclick="toggleMemory(0)" id="mem-box-0" class="memory-box w-28 h-36 bg-slate-800 border-2 border-slate-600 rounded-xl flex flex-col items-center justify-center relative shadow-lg group hover:border-sky-500 transition-all cursor-pointer">
-                                    <div class="absolute -top-3 bg-black px-2 text-xs text-sky-400 font-mono border border-slate-700 rounded shadow-sm">0x100</div>
-                                    <span id="mem-val-0" class="text-white font-bold text-4xl opacity-0 transition scale-50 group-hover:scale-75">85</span>
-                                    <span class="absolute bottom-2 text-[10px] font-bold text-slate-500 bg-slate-900/50 px-2 py-1 rounded uppercase tracking-widest">Index 0</span>
+
+                        <div class="grid md:grid-cols-2">
+                            <div class="p-6 border-r border-slate-800 bg-[#0f172a] flex flex-col justify-between">
+                                
+                                <div class="font-mono text-sm space-y-2 mb-8">
+                                    <div id="code-line-1" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
+                                        <span class="text-purple-400">int</span> arr[5];
+                                    </div>
+                                    <div id="code-line-2" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
+                                        <span class="text-purple-400">for</span>(<span class="text-sky-400">int</span> i=0; i&lt;5; i++) {
+                                    </div>
+                                    <div id="code-line-3" class="pl-8 p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
+                                        cin >> <span class="text-yellow-400 font-bold">arr[i]</span>;
+                                    </div>
+                                    <div id="code-line-4" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
+                                        }
+                                    </div>
                                 </div>
-                                <div onclick="toggleMemory(1)" id="mem-box-1" class="memory-box w-28 h-36 bg-slate-800 border-2 border-slate-600 rounded-xl flex flex-col items-center justify-center relative shadow-lg group hover:border-sky-500 transition-all cursor-pointer">
-                                    <div class="absolute -top-3 bg-black px-2 text-xs text-sky-400 font-mono border border-slate-700 rounded shadow-sm">0x104</div>
-                                    <span id="mem-val-1" class="text-white font-bold text-4xl opacity-0 transition scale-50 group-hover:scale-75">92</span>
-                                    <span class="absolute bottom-2 text-[10px] font-bold text-slate-500 bg-slate-900/50 px-2 py-1 rounded uppercase tracking-widest">Index 1</span>
+                                
+                                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                                    <label class="text-xs font-bold text-slate-500 uppercase block mb-2">User Input Console</label>
+                                    <div class="flex gap-2">
+                                        <input type="number" id="user-number-input" placeholder="Value..." disabled 
+                                               class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-white outline-none focus:border-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                                        <button onclick="handleUserSubmit()" id="input-submit-btn" disabled class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                            Enter
+                                        </button>
+                                    </div>
+                                    <div class="flex gap-2 mt-2">
+                                        <button onclick="stepInputLoop()" id="step-btn" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 rounded-lg shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2">
+                                            <span>▶</span> Start / Next Step
+                                        </button>
+                                    </div>
+                                    <div id="loop-status" class="mt-2 text-xs text-slate-400 font-mono min-h-[1.5em]">
+                                        Click Start to begin...
+                                    </div>
                                 </div>
-                                <div onclick="toggleMemory(2)" id="mem-box-2" class="memory-box w-28 h-36 bg-slate-800 border-2 border-slate-600 rounded-xl flex flex-col items-center justify-center relative shadow-lg group hover:border-sky-500 transition-all cursor-pointer">
-                                    <div class="absolute -top-3 bg-black px-2 text-xs text-sky-400 font-mono border border-slate-700 rounded shadow-sm">0x108</div>
-                                    <span id="mem-val-2" class="text-white font-bold text-4xl opacity-0 transition scale-50 group-hover:scale-75">47</span>
-                                    <span class="absolute bottom-2 text-[10px] font-bold text-slate-500 bg-slate-900/50 px-2 py-1 rounded uppercase tracking-widest">Index 2</span>
+                            </div>
+
+                            <div class="p-6 bg-[#1e293b] flex flex-col items-center justify-center">
+                                
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-6 text-center">System Memory (RAM)</h4>
+                                
+                                <div class="flex justify-center gap-2 mb-2" id="visual-array-container">
+                                    </div>
+                                
+                                <div class="relative h-12 w-full flex justify-center mt-2">
+                                    <div id="array-pointer-container" class="flex gap-2 relative"></div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid md:grid-cols-2 gap-8 my-12 items-stretch">
-                        <div class="flex flex-col justify-center">
-                            <h2 class="text-2xl font-bold text-white mb-4">Why the +4 Jump?</h2>
-                            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
-                                In the simulator above, Address 0 is <code class="text-sky-400">0x100</code> and Address 1 is <code class="text-sky-400">0x104</code>. This isn't random.
-                            </p>
-                            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
-                                An <code>integer</code> in C++ physically occupies <strong>4 bytes</strong> of RAM. Because arrays are contiguous, the next integer must start exactly where the previous one ended.
-                            </p>
-                            <div class="bg-black/40 p-5 rounded-lg border border-slate-800 font-mono text-xs text-slate-400 shadow-inner">
-                                <span class="block mb-2 text-slate-500 font-bold uppercase tracking-wider">Memory Map Examples</span>
-                                <span class="block mb-1">If <span class="text-pink-400">double</span> (8 bytes): 0x100 → 0x108 → 0x110</span>
-                                <span class="block">If <span class="text-green-400">char</span> (1 byte): 0x100 → 0x101 → 0x102</span>
-                            </div>
-                        </div>
-                        
-                        <div class="highlight-box border-l-purple-500 bg-slate-800/50 p-6 rounded-r-xl border border-slate-700 mt-0 h-full flex flex-col justify-center">
-                            <h3 class="text-purple-400 font-bold mb-4 text-xl flex items-center gap-2">
-                                <span>🚀</span> Deep Dive: O(1) Access
-                            </h3>
-                            <p class="text-slate-300 text-sm mb-4 leading-relaxed">
-                                Because memory is contiguous, the computer doesn't "search" for data. It teleports instantly using a simple math formula:
-                            </p>
-                            
-                            <div class="bg-black/50 rounded-lg p-4 border border-purple-500/30 shadow-lg mb-4">
-                                <code class="text-purple-300 font-mono text-sm block overflow-x-auto whitespace-nowrap">
-                                    Address = Base + (Index * Size)
-                                </code>
-                            </div>
-
-                            <p class="text-xs text-slate-500 italic">
-                                *Example: To find Index 2 of an int array at 100:*<br>
-                                <span class="font-mono text-slate-400">100 + (2 * 4) = 108</span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-800 pt-12">
-                        <h2 class="text-2xl font-bold text-white mb-6">Why do we start at 0?</h2>
-                        <div class="flex flex-col md:flex-row gap-8">
-                            <div class="flex-1">
-                                <p class="text-slate-300 mb-4">
-                                    It's a common confusion: "If it's the 1st element, why is the index 0?"
-                                </p>
-                                <p class="text-slate-300">
-                                    <strong>The Index represents "Distance", not "Count".</strong>
-                                </p>
-                                <p class="text-slate-400 text-sm mt-4">
-                                    Think of the index as: <em>"How many steps away from the start are we?"</em>
-                                </p>
-                                <ul class="mt-4 space-y-2 text-sm">
-                                    <li class="flex items-center gap-2">
-                                        <span class="bg-sky-500/20 text-sky-400 px-2 py-1 rounded font-mono text-xs">arr[0]</span>
-                                        <span class="text-slate-400">0 steps from the start (The start itself).</span>
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="bg-sky-500/20 text-sky-400 px-2 py-1 rounded font-mono text-xs">arr[1]</span>
-                                        <span class="text-slate-400">1 step away (The neighbor).</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="flex-1 bg-[#0b1120] p-6 rounded-xl border border-slate-800 flex flex-col justify-center items-center text-center">
-                                <div class="font-mono text-xs text-slate-500 mb-2">VISUALIZING OFFSET</div>
-                                <div class="flex items-center">
-                                    <div class="w-12 h-12 border-2 border-dashed border-slate-600 rounded-l flex items-center justify-center text-slate-500 text-xs">Base</div>
-                                    <div class="h-1 w-8 bg-sky-500"></div>
-                                    <div class="w-12 h-12 bg-sky-600 text-white font-bold flex items-center justify-center rounded shadow-[0_0_15px_rgba(2,132,199,0.5)]">Data</div>
-                                </div>
-                                <div class="mt-4 text-xs text-sky-400 font-mono">
-                                    Offset = 1 Unit<br>(Index 1)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="topic-5-2" class="tab-content max-w-4xl mx-auto pb-32">
-                <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-widest">5.2 Rules & Syntax</span>
-                <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">Declaration <span class="text-purple-400">Mastery</span></h1>
-
-                <p class="prose-text mb-8 text-justify">
-                    Declaring an array tells the compiler to reserve a specific block of memory. Unlike high-level languages (like Python or JS), C++ arrays are <strong>static</strong>—their size cannot change once the program is running.
-                </p>
-
-                <h2 class="prose-heading text-2xl clear-both pt-8">1. The Anatomy of Declaration</h2>
-                
-                <div class="mb-12 bg-[#111827] p-8 md:p-12 rounded-2xl border border-slate-800 shadow-xl overflow-x-auto">
-                    <div class="flex items-start justify-center gap-2 md:gap-6 font-mono text-3xl md:text-5xl whitespace-nowrap min-h-[100px]">
-                        <div class="group flex flex-col items-center cursor-help relative">
-                            <span class="token-kw border-b-4 border-transparent group-hover:border-purple-500 transition-all duration-300 pb-1">int</span>
-                            <span class="absolute top-full mt-4 text-xs md:text-sm text-purple-400 font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-[-10px] group-hover:translate-y-0">Data Type</span>
-                        </div>
-                        <div class="group flex flex-col items-center cursor-help relative">
-                            <span class="token-fn border-b-4 border-transparent group-hover:border-sky-500 transition-all duration-300 pb-1">scores</span>
-                            <span class="absolute top-full mt-4 text-xs md:text-sm text-sky-400 font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-[-10px] group-hover:translate-y-0">Identifier</span>
-                        </div>
-                        <span class="text-slate-600">[</span>
-                        <div class="group flex flex-col items-center cursor-help relative">
-                            <span class="token-num border-b-4 border-transparent group-hover:border-yellow-500 transition-all duration-300 pb-1">10</span>
-                            <span class="absolute top-full mt-4 text-xs md:text-sm text-yellow-400 font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-[-10px] group-hover:translate-y-0">Capacity</span>
-                        </div>
-                        <span class="text-slate-600">]</span><span class="text-slate-500">;</span>
-                    </div>
-                </div>
-
-                <h2 class="prose-heading text-2xl">2. Initialization Patterns (The 4 Ways)</h2>
-                <p class="mb-6 prose-text">There are four distinct ways to set the initial values of an array. Choosing the wrong one can lead to bugs.</p>
-                
-                <div class="grid grid-cols-1 gap-6">
-                    <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-green-500">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-green-400 font-bold">A. Full Initialization</h4>
-                            <span class="text-[10px] bg-green-900/30 text-green-400 px-2 py-1 rounded border border-green-500/30">Safe</span>
-                        </div>
-                        <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
-                            <span class="token-kw">int</span> arr[3] = {<span class="token-num">10</span>, <span class="token-num">20</span>, <span class="token-num">30</span>};
-                        </code>
-                        <p class="text-xs text-slate-400">Explicitly sets every value. No ambiguity. Best for small, fixed data sets.</p>
-                    </div>
-
-                    <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-sky-500">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-sky-400 font-bold">B. Partial Initialization (The "Zero" Trick)</h4>
-                            <span class="text-[10px] bg-sky-900/30 text-sky-400 px-2 py-1 rounded border border-sky-500/30">Pro Tip</span>
-                        </div>
-                        <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
-                            <span class="token-kw">int</span> arr[5] = {<span class="token-num">10</span>, <span class="token-num">20</span>}; <span class="token-cmt">// Rest becomes 0</span>
-                        </code>
-                        <p class="text-xs text-slate-400">Sets indices 0 and 1. <strong class="text-white">Crucially, the compiler automatically fills the remaining slots with 0.</strong> This is the fastest way to zero-out a large array: <code>int x[1000] = {0};</code></p>
-                    </div>
-
-                    <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-yellow-500">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-yellow-400 font-bold">C. Implicit Sizing</h4>
-                            <span class="text-[10px] bg-yellow-900/30 text-yellow-400 px-2 py-1 rounded border border-yellow-500/30">Situational</span>
-                        </div>
-                        <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
-                            <span class="token-kw">int</span> arr[] = {<span class="token-num">1</span>, <span class="token-num">2</span>, <span class="token-num">3</span>}; <span class="token-cmt">// Size becomes 3</span>
-                        </code>
-                        <p class="text-xs text-slate-400">The compiler counts the elements for you. Useful when you don't want to manually count, but dangerous if you later need to append data, as the size is locked at 3.</p>
-                    </div>
-
-                    <div class="bg-[#1e293b] p-6 rounded-xl border-l-4 border-red-500">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-red-400 font-bold">D. No Initialization</h4>
-                            <span class="text-[10px] bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-500/30">Danger</span>
-                        </div>
-                        <code class="block bg-black/50 p-3 rounded text-sm font-mono text-slate-300 mb-2">
-                            <span class="token-kw">int</span> arr[5];
-                        </code>
-                        <p class="text-xs text-slate-400">The array contains <strong>Garbage Values</strong> (random data left over in RAM from previous programs). Accessing this without assigning values first will cause calculation errors.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="topic-5-3" class="tab-content max-w-4xl mx-auto pb-32">
-                <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-widest">5.3 Logic & Algorithms</span>
-                <h1 class="text-4xl md:text-6xl font-black text-white mt-4 mb-8 tracking-tight">Populating <span class="text-amber-500">Data</span></h1>
-                
-                <div class="mb-12 shadow-2xl">
-                    <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/vLnPwxZdW4Y?si=AMqfMDZbDb0xPsrw&amp;start=9921" title="Full C++ Course" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="bg-slate-800 p-3 text-xs text-slate-400 text-center rounded-b-xl">
-                        Lecture 5.3: C++ Arrays Full Course (Source: FreeCodeCamp)
-                    </div>
-                </div>
-
-                <p class="prose-text mb-8">
-                    Before you can process data, you must put data <strong>INTO</strong> the array. This is done using a loop to access each index and assigning a value (usually via User Input).
-                </p>
-
-                <div class="bg-[#1e293b] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl mb-12">
-                    <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-                        <h3 class="text-white font-bold text-lg">Array Input Simulator</h3>
-                        <button onclick="resetInputSimulator()" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded transition">Reset</button>
-                    </div>
-
-                    <div class="grid md:grid-cols-2">
-                        <div class="p-6 border-r border-slate-800 bg-[#0f172a] flex flex-col justify-between">
-                            
-                            <div class="font-mono text-sm space-y-2 mb-8">
-                                <div id="code-line-1" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
-                                    <span class="text-purple-400">int</span> arr[5];
-                                </div>
-                                <div id="code-line-2" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
-                                    <span class="text-purple-400">for</span>(<span class="text-sky-400">int</span> i=0; i&lt;5; i++) {
-                                </div>
-                                <div id="code-line-3" class="pl-8 p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
-                                    cin >> <span class="text-yellow-400 font-bold">arr[i]</span>;
-                                </div>
-                                <div id="code-line-4" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
-                                    }
-                                </div>
-                            </div>
-                            
-                            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                                <label class="text-xs font-bold text-slate-500 uppercase block mb-2">User Input Console</label>
-                                <div class="flex gap-2">
-                                    <input type="number" id="user-number-input" placeholder="Value..." disabled 
-                                           class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-white outline-none focus:border-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                    <button onclick="handleUserSubmit()" id="input-submit-btn" disabled class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed">
-                                        Enter
-                                    </button>
-                                </div>
-                                <div class="flex gap-2 mt-2">
-                                    <button onclick="stepInputLoop()" id="step-btn" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 rounded-lg shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2">
-                                        <span>▶</span> Start / Next Step
-                                    </button>
-                                </div>
-                                <div id="loop-status" class="mt-2 text-xs text-slate-400 font-mono min-h-[1.5em]">
-                                    Click Start to begin...
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-6 bg-[#1e293b] flex flex-col items-center justify-center">
-                            
-                            <h4 class="text-xs font-bold text-slate-500 uppercase mb-6 text-center">System Memory (RAM)</h4>
-                            
-                            <div class="flex justify-center gap-2 mb-2" id="visual-array-container">
-                                </div>
-                            
-                            <div class="relative h-12 w-full flex justify-center mt-2">
-                                <div id="array-pointer-container" class="flex gap-2 relative"></div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <h2 class="prose-heading text-2xl">3. Common Algorithms</h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-black/30 p-6 rounded-xl border border-slate-800 hover:border-slate-600 transition">
-                        <h4 class="text-sky-400 font-bold mb-3 flex items-center gap-2"><span class="text-lg">Σ</span> Summation</h4>
-                        <p class="text-xs text-slate-400 mb-3">Accumulates all values into a total.</p>
-                        <pre class="code-block my-0 text-xs"><span class="token-kw">int</span> total = 0;
+                    <h2 class="prose-heading text-2xl">3. Common Algorithms</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-black/30 p-6 rounded-xl border border-slate-800 hover:border-slate-600 transition">
+                            <h4 class="text-sky-400 font-bold mb-3 flex items-center gap-2"><span class="text-lg">Σ</span> Summation</h4>
+                            <p class="text-xs text-slate-400 mb-3">Accumulates all values into a total.</p>
+                            <pre class="code-block my-0 text-xs"><span class="token-kw">int</span> total = 0;
 <span class="token-kw">for</span>(<span class="token-kw">int</span> i=0; i&lt;SIZE; i++) {
     total += arr[i];
 }</pre>
-                    </div>
+                        </div>
 
-                    <div class="bg-black/30 p-6 rounded-xl border border-slate-800 hover:border-slate-600 transition">
-                        <h4 class="text-green-400 font-bold mb-3 flex items-center gap-2"><span class="text-lg">⇡</span> Find Maximum</h4>
-                        <p class="text-xs text-slate-400 mb-3">Assumes first is max, then compares rest.</p>
-                        <pre class="code-block my-0 text-xs"><span class="token-kw">int</span> maxVal = arr[0];
+                        <div class="bg-black/30 p-6 rounded-xl border border-slate-800 hover:border-slate-600 transition">
+                            <h4 class="text-green-400 font-bold mb-3 flex items-center gap-2"><span class="text-lg">⇡</span> Find Maximum</h4>
+                            <p class="text-xs text-slate-400 mb-3">Assumes first is max, then compares rest.</p>
+                            <pre class="code-block my-0 text-xs"><span class="token-kw">int</span> maxVal = arr[0];
 <span class="token-kw">for</span>(<span class="token-kw">int</span> i=1; i&lt;SIZE; i++) {
     <span class="token-kw">if</span>(arr[i] > maxVal)
         maxVal = arr[i];
 }</pre>
-                    </div>
-                </div>
-
-                <h2 class="prose-heading text-2xl mt-12">4. Advanced: Arrays and Pointers</h2>
-                <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-                    <p class="font-mono text-sm text-slate-300 mb-4">
-                        If you declare: <code class="text-pink-400">int x[5];</code>
-                    </p>
-                    <ul class="space-y-2 text-sm text-slate-400">
-                        <li><code>cout << x;</code> prints the <strong>Memory Address</strong> (e.g., 0x7fff...)</li>
-                        <li><code>cout << x[0];</code> prints the <strong>Value</strong>.</li>
-                        <li><code>cout << *x;</code> (Dereferencing) also prints the <strong>Value</strong> at index 0.</li>
-                    </ul>
-                </div>
-
-                <h2 class="prose-heading text-2xl mt-12">5. Special Case: Character Arrays</h2>
-                <div class="bg-[#1e293b] p-8 rounded-2xl border border-slate-700 shadow-xl mb-12">
-                    <div class="flex flex-col md:flex-row gap-8 items-center">
-                        <div class="flex-1">
-                            <h3 class="text-white font-bold text-xl mb-2">The Null Terminator</h3>
-                            <p class="text-sm text-slate-400 leading-relaxed mb-4">
-                                Computers don't know where a word ends. C++ solves this by adding an invisible character <code class="text-red-400">'\0'</code> at the end of every string. If you forget space for this, your program will crash.
-                            </p>
-                            <input type="text" id="char-input" oninput="visualizeString()" placeholder="Type a word..." class="w-full bg-[#0f172a] border border-slate-600 rounded-xl px-4 py-2 text-white font-mono mb-4 focus:outline-none focus:border-sky-500">
                         </div>
-                        <div class="flex-1 w-full">
-                            <div id="char-output" class="min-h-[80px] flex flex-wrap gap-2 items-center justify-center p-4 bg-black/20 rounded-xl border border-slate-800 border-dashed">
-                                <span class="text-slate-600 italic text-xs">Visualizer Ready...</span>
+                    </div>
+
+                    <h2 class="prose-heading text-2xl mt-12">4. Advanced: Arrays and Pointers</h2>
+                    <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                        <p class="font-mono text-sm text-slate-300 mb-4">
+                            If you declare: <code class="text-pink-400">int x[5];</code>
+                        </p>
+                        <ul class="space-y-2 text-sm text-slate-400">
+                            <li><code>cout << x;</code> prints the <strong>Memory Address</strong> (e.g., 0x7fff...)</li>
+                            <li><code>cout << x[0];</code> prints the <strong>Value</strong>.</li>
+                            <li><code>cout << *x;</code> (Dereferencing) also prints the <strong>Value</strong> at index 0.</li>
+                        </ul>
+                    </div>
+
+                    <h2 class="prose-heading text-2xl mt-12">5. Special Case: Character Arrays</h2>
+                    <div class="bg-[#1e293b] p-8 rounded-2xl border border-slate-700 shadow-xl mb-12">
+                        <div class="flex flex-col md:flex-row gap-8 items-center">
+                            <div class="flex-1">
+                                <h3 class="text-white font-bold text-xl mb-2">The Null Terminator</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed mb-4">
+                                    Computers don't know where a word ends. C++ solves this by adding an invisible character <code class="text-red-400">'\0'</code> at the end of every string. If you forget space for this, your program will crash.
+                                </p>
+                                <input type="text" id="char-input" oninput="visualizeString()" placeholder="Type a word..." class="w-full bg-[#0f172a] border border-slate-600 rounded-xl px-4 py-2 text-white font-mono mb-4 focus:outline-none focus:border-sky-500">
+                            </div>
+                            <div class="flex-1 w-full">
+                                <div id="char-output" class="min-h-[80px] flex flex-wrap gap-2 items-center justify-center p-4 bg-black/20 rounded-xl border border-slate-800 border-dashed">
+                                    <span class="text-slate-600 italic text-xs">Visualizer Ready...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
 
-            <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800 mt-20"></footer>
+            <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800"></footer>
             
         </main>
     </div>
