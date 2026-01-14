@@ -5,10 +5,11 @@
 // Global State for Input Simulator
 const INPUT_SIZE = 5;
 let inputState = {
-    step: 0, // 0: Check, 1: Wait for Input, 2: Assign, 3: Increment
+    step: 0, // 0: Check, 1: Wait for Input, 2: Increment
     i: 0,
     finished: false
 };
+// Start with '?' to show emptiness, NOT pre-filled numbers
 let inputArrayData = Array(INPUT_SIZE).fill('?');
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,12 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initTypewriter();
     initParallax();
     
-    // Initialize specific simulators when on learn.html
     const learnContainer = document.getElementById('learn-content-container');
     if (learnContainer) {
         setTimeout(() => {
             switchTab('topic-5-1'); 
-            initInputVisualizer(); // Start Input Simulator
+            initInputVisualizer(); // Initialize with empty boxes
         }, 50);
     }
 });
@@ -38,7 +38,6 @@ function loadGlobalElements() {
     const header = document.getElementById('dynamic-header');
     const footer = document.getElementById('dynamic-footer');
 
-    // Header HTML Generation
     if(header) {
         let navHTML = '';
         let mobileNavHTML = '';
@@ -70,7 +69,6 @@ function loadGlobalElements() {
         }
     }
 
-    // Footer HTML Generation
     if(footer) {
         const year = new Date().getFullYear();
         footer.innerHTML = `
@@ -131,7 +129,6 @@ function switchTab(tabId) {
         deskBtn.classList.remove('text-slate-400', 'border-transparent');
     }
 
-    // Mobile Nav Updates
     document.querySelectorAll('.mob-link').forEach(el => {
         el.classList.remove('active', 'bg-sky-600', 'text-white', 'shadow-lg');
         el.classList.add('bg-slate-800', 'text-slate-400', 'border', 'border-slate-700');
@@ -167,7 +164,7 @@ function initInputVisualizer() {
     container.innerHTML = '';
     pointerContainer.innerHTML = '';
     
-    // Create empty boxes
+    // Create empty boxes based on inputArrayData
     for(let i=0; i<INPUT_SIZE; i++) {
         const box = document.createElement('div');
         box.id = `input-box-${i}`;
@@ -183,8 +180,6 @@ function initInputVisualizer() {
         ptr.innerHTML = ``; 
         pointerContainer.appendChild(ptr);
     }
-    
-    updateInputUI();
 }
 
 function resetInputSimulator() {
@@ -258,11 +253,7 @@ function stepInputLoop() {
         if(activeBox) activeBox.classList.add('border-yellow-400');
 
     } else if (inputState.step === 2) {
-        // Step 2: Assign Value (Done by handleUserSubmit)
-        // This block acts as a bridge after submit is clicked
-        
-    } else if (inputState.step === 3) {
-        // Step 3: Increment
+        // Step 2: Increment
         highlightLine(2); 
         inputState.i++;
         updatePointer(true); // Move pointer
@@ -314,11 +305,7 @@ function handleUserSubmit() {
     
     document.getElementById('loop-status').innerHTML = `Value <span class="text-sky-400 font-bold">${val}</span> stored at index ${inputState.i}.`;
     
-    inputState.step = 3; // Move to increment next
-}
-
-function updateInputUI() {
-    // Helper to refresh whole array if needed (rarely used in this flow)
+    inputState.step = 2; // Move to increment next
 }
 
 function updatePointer(show) {
@@ -332,7 +319,7 @@ function updatePointer(show) {
         const targetWrapper = pointerContainer.children[inputState.i];
         if(targetWrapper) {
             targetWrapper.innerHTML = `
-                <div class="flex flex-col items-center animate-bounce text-sky-400">
+                <div class="flex flex-col items-center bounce-arrow text-sky-400">
                     <span class="text-xl font-bold">↑</span>
                     <span class="text-xs font-mono font-bold">i=${inputState.i}</span>
                 </div>
@@ -457,7 +444,7 @@ function initParallax() {
     });
 }
 
-// Expose functions to window (optional but good for HTML onclick handlers)
+// Expose functions
 window.switchTab = switchTab;
 window.resetInputSimulator = resetInputSimulator;
 window.stepInputLoop = stepInputLoop;
