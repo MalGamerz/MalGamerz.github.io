@@ -18,6 +18,9 @@
         /* Force 16:9 Aspect Ratio for Videos */
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1rem; border: 1px solid #334155; background: #000; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* Animation for the Array Pointer */
+        .array-pointer { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="bg-[#0f172a] text-slate-300 font-sans flex flex-col h-screen overflow-hidden">
@@ -316,7 +319,7 @@
 
                 <div class="bg-[#1e293b] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl mb-12">
                     <div class="bg-slate-950/50 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-                        <h3 class="text-white font-bold text-lg">For-Loop Logic Simulator</h3>
+                        <h3 class="text-white font-bold text-lg">Array Traversal Simulator</h3>
                         <div class="flex gap-2">
                             <button onclick="resetLoop()" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded transition">Reset</button>
                         </div>
@@ -332,7 +335,7 @@
                                     <span class="text-purple-400">for</span>(<span class="text-sky-400">int</span> i=0; i&lt;5; i++) {
                                 </div>
                                 <div id="code-line-3" class="pl-8 p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
-                                    total += arr[i];
+                                    total += <span class="text-yellow-400 font-bold">arr[i]</span>;
                                 </div>
                                 <div id="code-line-4" class="p-2 rounded transition-colors text-slate-400 border-l-2 border-transparent">
                                     }
@@ -341,18 +344,14 @@
                             
                             <div class="mt-8 pt-6 border-t border-slate-800">
                                 <h4 class="text-xs font-bold text-slate-500 uppercase mb-4">Variable Watch</h4>
-                                <div class="grid grid-cols-3 gap-4 text-center">
-                                    <div class="bg-slate-800 p-2 rounded">
-                                        <div class="text-xs text-slate-400">i</div>
-                                        <div id="var-i" class="text-xl font-bold text-sky-400 font-mono">0</div>
-                                    </div>
-                                    <div class="bg-slate-800 p-2 rounded">
-                                        <div class="text-xs text-slate-400">arr[i]</div>
-                                        <div id="var-arr" class="text-xl font-bold text-yellow-400 font-mono">10</div>
-                                    </div>
+                                <div class="grid grid-cols-2 gap-4 text-center">
                                     <div class="bg-slate-800 p-2 rounded">
                                         <div class="text-xs text-slate-400">total</div>
                                         <div id="var-total" class="text-xl font-bold text-green-400 font-mono">0</div>
+                                    </div>
+                                    <div class="bg-slate-800 p-2 rounded">
+                                        <div class="text-xs text-slate-400">Current Value (arr[i])</div>
+                                        <div id="var-arr" class="text-xl font-bold text-yellow-400 font-mono">-</div>
                                     </div>
                                 </div>
                             </div>
@@ -360,17 +359,23 @@
 
                         <div class="p-6 flex flex-col justify-between bg-[#1e293b]">
                             <div>
-                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 text-center">Memory Visualization</h4>
-                                <div class="flex flex-wrap justify-center gap-2" id="visual-array-container">
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 text-center">The Array Data Structure</h4>
+                                
+                                <div class="flex justify-center gap-2 mb-2" id="visual-array-container">
                                     </div>
+                                
+                                <div class="relative h-10 w-full flex justify-center">
+                                    <div id="array-pointer-container" class="flex gap-2 relative">
+                                        </div>
+                                </div>
                             </div>
 
-                            <div class="mt-8">
+                            <div class="mt-4">
                                 <div id="loop-status" class="text-sm font-mono text-slate-300 bg-black/30 p-3 rounded border border-slate-700 mb-4 h-12 flex items-center">
-                                    Ready to start loop...
+                                    Ready to iterate...
                                 </div>
                                 <button onclick="stepLoop()" id="step-btn" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg shadow-lg shadow-sky-900/20 transition flex items-center justify-center gap-2">
-                                    <span>▶</span> Execute Next Step
+                                    <span>⬇</span> Access Next Element
                                 </button>
                             </div>
                         </div>
@@ -434,10 +439,11 @@
 
             </div>
 
+            <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800 mt-20"></footer>
+            
         </main>
     </div>
 
-    <footer id="dynamic-footer" class="bg-[#0b1120] border-t border-slate-800"></footer>
     <script src="script.js"></script>
 </body>
 </html>
